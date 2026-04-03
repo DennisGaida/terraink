@@ -446,6 +446,7 @@ export default function PreviewPanel() {
             landColor={effectiveTheme.map.land}
             showPosterText={form.showPosterText}
             includeCredits={form.includeCredits}
+            includeOsmAttribution={form.includeOsmAttribution}
             showOverlay={form.showMarkers}
           />
 

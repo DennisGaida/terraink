@@ -26,6 +26,7 @@ export interface ExportOptions {
   showPosterText: boolean;
   showOverlay?: boolean;
   includeCredits?: boolean;
+  includeOsmAttribution?: boolean;
   markers?: MarkerItem[];
   markerIcons?: MarkerIconDefinition[];
   markerProjection?: MarkerProjectionInput;

@@ -26,6 +26,7 @@ interface PosterTextOverlayProps {
   landColor: string;
   showPosterText: boolean;
   includeCredits: boolean;
+  includeOsmAttribution: boolean;
   showOverlay: boolean;
 }
 
@@ -44,6 +45,7 @@ export default function PosterTextOverlay({
   landColor,
   showPosterText,
   includeCredits,
+  includeOsmAttribution,
   showOverlay,
 }: PosterTextOverlayProps) {
   const toCqMin = (px: number) => (px / TEXT_DIMENSION_REFERENCE_PX) * 100;
@@ -107,19 +109,21 @@ export default function PosterTextOverlay({
         </>
       )}
 
-      <span
-        className="poster-attribution"
-        style={{
-          fontFamily: bodyFont,
-          color: attributionColor,
-          opacity: attributionOpacity,
-          fontSize: attributionFontSize,
-          bottom: `${TEXT_EDGE_MARGIN_RATIO * 100}%`,
-          right: `${TEXT_EDGE_MARGIN_RATIO * 100}%`,
-        }}
-      >
-        &copy; OpenStreetMap contributors
-      </span>
+      {includeOsmAttribution && (
+        <span
+          className="poster-attribution"
+          style={{
+            fontFamily: bodyFont,
+            color: attributionColor,
+            opacity: attributionOpacity,
+            fontSize: attributionFontSize,
+            bottom: `${TEXT_EDGE_MARGIN_RATIO * 100}%`,
+            right: `${TEXT_EDGE_MARGIN_RATIO * 100}%`,
+          }}
+        >
+          &copy; OpenStreetMap contributors
+        </span>
+      )}
 
       {includeCredits && (
         <span

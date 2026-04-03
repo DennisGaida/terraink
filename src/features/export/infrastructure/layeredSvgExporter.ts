@@ -26,6 +26,7 @@ interface LayeredSvgOptions {
   showPosterText: boolean;
   showOverlay: boolean;
   includeCredits: boolean;
+  includeOsmAttribution?: boolean;
   markers: MarkerItem[];
   markerIcons: MarkerIconDefinition[];
 }
@@ -80,6 +81,7 @@ export async function createLayeredSvgBlobFromMap({
   showPosterText,
   showOverlay,
   includeCredits,
+  includeOsmAttribution = true,
   markers,
   markerIcons,
 }: LayeredSvgOptions): Promise<Blob> {
@@ -206,6 +208,7 @@ export async function createLayeredSvgBlobFromMap({
           showPosterText,
           showOverlay,
           includeCredits,
+          includeOsmAttribution,
         );
       }),
     });

@@ -30,6 +30,7 @@ export function drawPosterText(
   showPosterText: boolean,
   showOverlay: boolean,
   includeCredits: boolean = true,
+  includeOsmAttribution: boolean = true,
 ): void {
   const textColor = theme.ui?.text || "#111111";
   const landColor = theme.map?.land || "#808080";
@@ -85,17 +86,19 @@ export function drawPosterText(
     ctx.globalAlpha = 1;
   }
 
-  ctx.fillStyle = attributionColor;
-  ctx.globalAlpha = attributionAlpha;
-  ctx.textAlign = "right";
-  ctx.textBaseline = "bottom";
-  ctx.font = `300 ${attributionFontSize}px ${bodyFontFamily}`;
-  ctx.fillText(
-    "\u00a9 OpenStreetMap contributors",
-    width * (1 - TEXT_EDGE_MARGIN_RATIO),
-    height * (1 - TEXT_EDGE_MARGIN_RATIO),
-  );
-  ctx.globalAlpha = 1;
+  if (includeOsmAttribution) {
+    ctx.fillStyle = attributionColor;
+    ctx.globalAlpha = attributionAlpha;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "bottom";
+    ctx.font = `300 ${attributionFontSize}px ${bodyFontFamily}`;
+    ctx.fillText(
+      "\u00a9 OpenStreetMap contributors",
+      width * (1 - TEXT_EDGE_MARGIN_RATIO),
+      height * (1 - TEXT_EDGE_MARGIN_RATIO),
+    );
+    ctx.globalAlpha = 1;
+  }
 
   if (includeCredits) {
     ctx.fillStyle = attributionColor;

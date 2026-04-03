@@ -27,6 +27,7 @@ export async function compositeExport(
     showPosterText = true,
     showOverlay = true,
     includeCredits = true,
+    includeOsmAttribution = true,
     markers = [],
     markerIcons = [],
     markerProjection,
@@ -79,6 +80,7 @@ export async function compositeExport(
     showPosterText,
     showOverlay,
     includeCredits,
+    includeOsmAttribution,
   );
 
   const size: CanvasSize = {

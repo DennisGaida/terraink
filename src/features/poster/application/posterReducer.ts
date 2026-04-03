@@ -40,6 +40,7 @@ export interface PosterForm {
   includeRoadMinorLow: boolean;
   includeRoadOutline: boolean;
   showMarkers: boolean;
+  includeOsmAttribution: boolean;
 }
 
 /* ────── App-level state ────── */

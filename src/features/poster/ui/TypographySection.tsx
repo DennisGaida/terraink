@@ -104,6 +104,18 @@ export default function TypographySection({
           </select>
         </label>
 
+        <label className="toggle-field">
+          <span>OSM Attribution</span>
+          <span className="theme-switch">
+            <input
+              type="checkbox"
+              name="includeOsmAttribution"
+              checked={Boolean(form.includeOsmAttribution)}
+              onChange={onChange}
+            />
+            <span className="theme-switch-track" aria-hidden="true" />
+          </span>
+        </label>
       </section>
     </>
   );

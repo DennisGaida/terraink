@@ -115,6 +115,7 @@ export function useExport() {
             showPosterText: form.showPosterText,
             showOverlay: form.showMarkers,
             includeCredits: form.includeCredits,
+            includeOsmAttribution: form.includeOsmAttribution,
             markers: hasVisibleMarkers ? state.markers : [],
             markerIcons: hasVisibleMarkers
               ? getAllMarkerIcons(state.customMarkerIcons)
@@ -152,6 +153,7 @@ export function useExport() {
           showPosterText: form.showPosterText,
           showOverlay: form.showMarkers,
           includeCredits: form.includeCredits,
+          includeOsmAttribution: form.includeOsmAttribution,
           markers: hasVisibleMarkers ? state.markers : [],
           markerIcons: hasVisibleMarkers
             ? getAllMarkerIcons(state.customMarkerIcons)

@@ -9,6 +9,7 @@ import type { MobileTab } from "@/shared/ui/MobileNavBar";
 import LocationSection from "@/features/location/ui/LocationSection";
 import MapSettingsSection from "@/features/map/ui/MapSettingsSection";
 import LayersSection from "@/features/map/ui/LayersSection";
+import IsochroneSection from "@/features/isochrone/ui/IsochroneSection";
 import MarkersSection from "@/features/markers/ui/MarkersSection";
 import TypographySection from "@/features/poster/ui/TypographySection";
 import {
@@ -230,17 +231,20 @@ export default function SettingsPanel({
         >
           <div className="accordion-body-inner">
             {!isAuxEditorActive ? (
-              <LayersSection
-                form={state.form}
-                effectiveTheme={effectiveTheme}
-                customColors={state.customColors}
-                onChange={handleChange}
-                onColorChange={handleColorChange}
-                onResetColor={handleResetColor}
-                minPosterCm={MIN_POSTER_CM}
-                maxPosterCm={MAX_POSTER_CM}
-                onNumericFieldBlur={handleNumericFieldBlur}
-              />
+              <>
+                <LayersSection
+                  form={state.form}
+                  effectiveTheme={effectiveTheme}
+                  customColors={state.customColors}
+                  onChange={handleChange}
+                  onColorChange={handleColorChange}
+                  onResetColor={handleResetColor}
+                  minPosterCm={MIN_POSTER_CM}
+                  maxPosterCm={MAX_POSTER_CM}
+                  onNumericFieldBlur={handleNumericFieldBlur}
+                />
+                <IsochroneSection />
+              </>
             ) : null}
           </div>
         </div>

@@ -2795,3 +2795,366 @@ button.location-clear-btn:focus-visible {
     margin-left: 0;
   }
 }
+
+/* ── Isochrone section ── */
+
+.isochrone-section {
+  border-top: 1px solid rgba(214, 233, 247, 0.1);
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+.isochrone-controls {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.isochrone-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.isochrone-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+.isochrone-mode-group {
+  display: flex;
+  gap: 4px;
+}
+
+.isochrone-mode-btn {
+  flex: 1;
+  padding: 5px 0;
+  border-radius: 6px;
+  border: 1px solid rgba(214, 233, 247, 0.2);
+  background: rgba(214, 233, 247, 0.05);
+  color: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.isochrone-mode-btn.is-active {
+  background: rgba(94, 174, 212, 0.25);
+  border-color: rgba(94, 174, 212, 0.6);
+}
+
+.isochrone-ranges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.isochrone-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px 2px 8px;
+  border-radius: 999px;
+  background: rgba(94, 174, 212, 0.2);
+  border: 1px solid rgba(94, 174, 212, 0.35);
+  font-size: 12px;
+}
+
+.isochrone-chip-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.6;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 1px;
+}
+
+.isochrone-chip-remove:hover {
+  opacity: 1;
+}
+
+.isochrone-range-add {
+  display: flex;
+  gap: 2px;
+}
+
+.isochrone-range-input {
+  width: 46px;
+  padding: 3px 5px;
+  border-radius: 5px;
+  border: 1px solid rgba(214, 233, 247, 0.2);
+  background: rgba(214, 233, 247, 0.05);
+  color: inherit;
+  font-size: 12px;
+}
+
+.isochrone-range-input::-webkit-inner-spin-button,
+.isochrone-range-input::-webkit-outer-spin-button {
+  display: none;
+}
+
+.isochrone-range-add-btn {
+  width: 24px;
+  border-radius: 5px;
+  border: 1px solid rgba(214, 233, 247, 0.2);
+  background: rgba(214, 233, 247, 0.05);
+  color: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.isochrone-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.isochrone-preset-btn {
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1px solid rgba(214, 233, 247, 0.15);
+  background: rgba(214, 233, 247, 0.04);
+  color: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.1s;
+}
+
+.isochrone-preset-btn:hover {
+  opacity: 1;
+}
+
+.isochrone-color-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.isochrone-color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 2px solid rgba(214, 233, 247, 0.25);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s;
+}
+
+.isochrone-color-swatch:hover,
+.isochrone-color-swatch[aria-pressed="true"] {
+  border-color: rgba(214, 233, 247, 0.6);
+}
+
+.isochrone-color-presets {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.isochrone-color-preset {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.12s, transform 0.1s;
+}
+
+.isochrone-color-preset:hover {
+  transform: scale(1.15);
+}
+
+.isochrone-color-preset.is-active {
+  border-color: #fff;
+}
+
+.isochrone-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.isochrone-slider-row input[type="range"] {
+  flex: 1;
+  accent-color: #5eaed4;
+}
+
+.isochrone-slider-value {
+  font-size: 11px;
+  opacity: 0.7;
+  min-width: 32px;
+  text-align: right;
+}
+
+.isochrone-center-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.isochrone-coord-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.isochrone-coord-label {
+  font-size: 12px;
+  opacity: 0.7;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.isochrone-coord-input {
+  flex: 1;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(214, 233, 247, 0.2);
+  background: rgba(214, 233, 247, 0.05);
+  color: inherit;
+  font-size: 12px;
+}
+
+.isochrone-center-map-btn {
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(214, 233, 247, 0.2);
+  background: rgba(214, 233, 247, 0.05);
+  color: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.isochrone-center-map-btn:hover {
+  background: rgba(214, 233, 247, 0.12);
+}
+
+.isochrone-status {
+  font-size: 12px;
+  opacity: 0.6;
+  margin: 0;
+}
+
+.isochrone-status--error {
+  opacity: 1;
+  color: #ef4444;
+}
+
+/* API key button */
+.isochrone-apikey-btn {
+  width: 100%;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px dashed currentColor;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.isochrone-apikey-btn:hover {
+  opacity: 1;
+}
+
+.isochrone-apikey-btn.is-set {
+  border-style: solid;
+  opacity: 0.5;
+}
+
+.isochrone-apikey-btn.is-set:hover {
+  opacity: 0.9;
+}
+
+/* API key modal */
+.isochrone-apikey-modal {
+  width: min(400px, 90vw);
+}
+
+.isochrone-apikey-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.isochrone-apikey-hint {
+  font-size: 13px;
+  margin: 0;
+  opacity: 0.75;
+  line-height: 1.5;
+}
+
+.isochrone-apikey-hint a {
+  color: inherit;
+}
+
+.isochrone-apikey-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  font-family: monospace;
+  opacity: 0.9;
+}
+
+.isochrone-apikey-input::placeholder {
+  opacity: 0.4;
+}
+
+.isochrone-apikey-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.isochrone-apikey-clear {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.isochrone-apikey-clear:hover {
+  opacity: 1;
+}
+
+.isochrone-apikey-save {
+  padding: 6px 18px;
+  border-radius: 6px;
+  border: none;
+  background: #0ea5e9;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.isochrone-apikey-save:disabled {
+  background: #10b981;
+  cursor: default;
+}

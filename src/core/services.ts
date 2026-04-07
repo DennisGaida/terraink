@@ -40,3 +40,7 @@ export { createPdfBlobFromCanvas } from "@/features/export/infrastructure/pdfExp
 export { createPosterFilename } from "@/features/export/infrastructure/filenameGenerator";
 
 export { triggerDownloadBlob } from "@/features/export/infrastructure/fileDownloader";
+
+/* ── Isochrone ── */
+
+export { fetchIsochrone } from "@/features/isochrone/infrastructure/orsAdapter";

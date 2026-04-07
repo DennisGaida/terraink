@@ -688,6 +688,7 @@ export function generateMapStyle(
           "line-join": "round" as const,
         },
       },
+
     ],
   };
 }

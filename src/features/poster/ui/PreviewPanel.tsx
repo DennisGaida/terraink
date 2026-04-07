@@ -419,6 +419,10 @@ export default function PreviewPanel() {
             overzoomScale={overzoomScale}
             onMove={handleMove}
             onMoveEnd={handleMoveEnd}
+            isochroneGeoJson={form.includeIsochrone ? state.isochroneGeoJson : null}
+            isochroneFillOpacity={Number(form.isochroneFillOpacity)}
+            isochroneStrokeOpacity={Number(form.isochroneStrokeOpacity)}
+            isochroneStrokeWidth={Number(form.isochroneStrokeWidth)}
           />
           {form.showMarkers ? (
             <GradientFades color={effectiveTheme.ui.bg} />

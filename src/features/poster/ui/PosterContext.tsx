@@ -18,6 +18,7 @@ import { getTheme } from "@/features/theme/infrastructure/themeRepository";
 import { applyThemeColorOverrides } from "@/features/theme/domain/colorPaths";
 import { generateMapStyle } from "@/features/map/infrastructure/maplibreStyle";
 import { useGeolocation } from "@/features/map/application/useGeolocation";
+import { useIsochrone } from "@/features/isochrone/application/useIsochrone";
 import type { StyleSpecification } from "maplibre-gl";
 import type { MapInstanceRef } from "@/features/map/domain/types";
 import { createDefaultMarkerSettings } from "@/features/markers/infrastructure/helpers";
@@ -78,6 +79,16 @@ export const DEFAULT_FORM: PosterForm = {
   includeRoadOutline: true,
   showMarkers: true,
   includeOsmAttribution: true,
+  includeIsochrone: false,
+  isochroneMode: "walking",
+  isochroneRanges: "5,10,15",
+  isochroneFillOpacity: "0.3",
+  isochroneStrokeOpacity: "0.8",
+  isochroneStrokeWidth: "2",
+  isochroneCustomCenter: false,
+  isochroneCenterLat: "",
+  isochroneCenterLon: "",
+  isochroneColor: "#0ea5e9",
 };
 
 const INITIAL_STATE: PosterState = {
@@ -91,6 +102,9 @@ const INITIAL_STATE: PosterState = {
   },
   isMarkerEditorActive: false,
   activeMarkerId: null,
+  isochroneGeoJson: null,
+  isochroneLoading: false,
+  isochroneError: "",
   error: "",
   isExporting: false,
   isLocationFocused: false,
@@ -131,6 +145,9 @@ export function PosterProvider({ children }: { children: ReactNode }) {
 
   // Set initial position from browser geolocation (or Hanover fallback)
   useGeolocation(dispatch);
+
+  // Fetch isochrone data when enabled and relevant fields change
+  useIsochrone(dispatch, state.form);
 
   const selectedTheme = useMemo(
     () => getTheme(state.form.theme),

@@ -65,9 +65,6 @@ export const UPDATES_URL = String(
 
 export const INSTALL_DIAGNOSTICS_ENABLED = false;
 
-/** OpenRouteService API key — required for the Isochrone Overlay feature. */
-export const ORS_API_KEY = import.meta.env.VITE_ORS_API_KEY ?? "";
-
 export interface FontOption {
   value: string;
   label: string;

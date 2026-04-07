@@ -3005,3 +3005,112 @@ button.location-clear-btn:focus-visible {
   opacity: 0.6;
   margin: 0;
 }
+
+.isochrone-status--error {
+  opacity: 1;
+  color: #ef4444;
+}
+
+/* API key button */
+.isochrone-apikey-btn {
+  width: 100%;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px dashed currentColor;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.isochrone-apikey-btn:hover {
+  opacity: 1;
+}
+
+.isochrone-apikey-btn.is-set {
+  border-style: solid;
+  opacity: 0.5;
+}
+
+.isochrone-apikey-btn.is-set:hover {
+  opacity: 0.9;
+}
+
+/* API key modal */
+.isochrone-apikey-modal {
+  width: min(400px, 90vw);
+}
+
+.isochrone-apikey-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.isochrone-apikey-hint {
+  font-size: 13px;
+  margin: 0;
+  opacity: 0.75;
+  line-height: 1.5;
+}
+
+.isochrone-apikey-hint a {
+  color: inherit;
+}
+
+.isochrone-apikey-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  font-family: monospace;
+  opacity: 0.9;
+}
+
+.isochrone-apikey-input::placeholder {
+  opacity: 0.4;
+}
+
+.isochrone-apikey-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.isochrone-apikey-clear {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.isochrone-apikey-clear:hover {
+  opacity: 1;
+}
+
+.isochrone-apikey-save {
+  padding: 6px 18px;
+  border-radius: 6px;
+  border: none;
+  background: #0ea5e9;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.isochrone-apikey-save:disabled {
+  background: #10b981;
+  cursor: default;
+}

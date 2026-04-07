@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PosterAction, PosterForm } from "@/features/poster/application/posterReducer";
 import { fetchIsochrone } from "@/core/services";
-import { ORS_API_KEY } from "@/core/config";
+import { getOrsApiKey, ORS_KEY_CHANGED_EVENT } from "../infrastructure/orsApiKeyStorage";
 import { blendHex } from "@/shared/utils/color";
 import type { IsochroneContour } from "../domain/types";
 
@@ -35,6 +35,16 @@ export function useIsochrone(
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
+  const [apiKey, setApiKey] = useState(() => getOrsApiKey());
+
+  useEffect(() => {
+    function handleKeyChange() {
+      setApiKey(getOrsApiKey());
+    }
+    window.addEventListener(ORS_KEY_CHANGED_EVENT, handleKeyChange);
+    return () => window.removeEventListener(ORS_KEY_CHANGED_EVENT, handleKeyChange);
+  }, []);
+
   const {
     includeIsochrone,
     latitude,
@@ -56,11 +66,11 @@ export function useIsochrone(
       return;
     }
 
-    if (!ORS_API_KEY) {
+    if (!apiKey) {
       dispatch({
         type: "SET_ISOCHRONE_DATA",
         geoJson: null,
-        error: "No API key configured. Set VITE_ORS_API_KEY in your .env file. Get a free key at openrouteservice.org.",
+        error: "No API key set.",
       });
       return;
     }
@@ -83,7 +93,7 @@ export function useIsochrone(
 
       fetchIsochrone(
         { lat: baseLat, lon: baseLon, mode: isochroneMode, contours },
-        ORS_API_KEY,
+        apiKey,
         controller.signal,
       )
         .then((geoJson) => {
@@ -102,6 +112,7 @@ export function useIsochrone(
     };
   }, [
     dispatch,
+    apiKey,
     includeIsochrone,
     latitude,
     longitude,

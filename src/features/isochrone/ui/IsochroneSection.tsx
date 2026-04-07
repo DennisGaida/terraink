@@ -1,6 +1,10 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { usePosterContext } from "@/features/poster/ui/PosterContext";
-import { ORS_API_KEY } from "@/core/config";
+import {
+  getOrsApiKey,
+  setOrsApiKey,
+} from "../infrastructure/orsApiKeyStorage";
 import type { IsochroneMode } from "../domain/types";
 
 const TRANSPORT_MODES: { value: IsochroneMode; label: string }[] = [
@@ -14,13 +18,95 @@ const PRESET_COLORS = [
   "#0ea5e9", "#6366f1", "#f59e0b", "#10b981", "#ef4444", "#ec4899", "#8b5cf6",
 ];
 
+function ApiKeyModal({ onClose }: { onClose: () => void }) {
+  const [value, setValue] = useState(getOrsApiKey);
+  const [saved, setSaved] = useState(false);
+
+  function handleSave() {
+    setOrsApiKey(value.trim());
+    setSaved(true);
+    setTimeout(onClose, 600);
+  }
+
+  return createPortal(
+    <div
+      className="picker-modal-backdrop"
+      role="presentation"
+      onClick={onClose}
+    >
+      <div
+        className="picker-modal isochrone-apikey-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ors-apikey-modal-title"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="picker-modal-header">
+          <h3 id="ors-apikey-modal-title">ORS API Key</h3>
+          <button
+            type="button"
+            className="picker-modal-close"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            &times;
+          </button>
+        </div>
+        <div className="isochrone-apikey-body">
+          <p className="isochrone-apikey-hint">
+            A free API key from{" "}
+            <a
+              href="https://openrouteservice.org/dev/#/signup"
+              target="_blank"
+              rel="noreferrer"
+            >
+              openrouteservice.org
+            </a>{" "}
+            is required. The key is stored only in your browser.
+          </p>
+          <input
+            type="text"
+            className="isochrone-apikey-input"
+            value={value}
+            onChange={(e) => { setValue(e.target.value); setSaved(false); }}
+            placeholder="Paste your ORS API key here"
+            autoFocus
+            spellCheck={false}
+          />
+          <div className="isochrone-apikey-actions">
+            {value && (
+              <button
+                type="button"
+                className="isochrone-apikey-clear"
+                onClick={() => { setValue(""); setSaved(false); }}
+              >
+                Clear
+              </button>
+            )}
+            <button
+              type="button"
+              className="isochrone-apikey-save"
+              onClick={handleSave}
+              disabled={saved}
+            >
+              {saved ? "Saved!" : "Save"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 export default function IsochroneSection() {
   const { state, dispatch } = usePosterContext();
   const { form, isochroneLoading, isochroneError } = state;
 
   const [rangeInput, setRangeInput] = useState("");
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const hasApiKey = Boolean(ORS_API_KEY);
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [hasApiKey, setHasApiKey] = useState(() => Boolean(getOrsApiKey()));
 
   function setField(name: string, value: string | boolean) {
     dispatch({ type: "SET_FIELD", name, value });
@@ -60,6 +146,11 @@ export default function IsochroneSection() {
     setField("isochroneCenterLon", form.longitude);
   }
 
+  function handleModalClose() {
+    setShowApiKeyModal(false);
+    setHasApiKey(Boolean(getOrsApiKey()));
+  }
+
   return (
     <section className="panel-block isochrone-section">
       <div className="toggle-field">
@@ -77,6 +168,17 @@ export default function IsochroneSection() {
 
       {form.includeIsochrone && (
         <div className="isochrone-controls">
+          {/* API key */}
+          <div className="isochrone-field">
+            <button
+              type="button"
+              className={`isochrone-apikey-btn${hasApiKey ? " is-set" : ""}`}
+              onClick={() => setShowApiKeyModal(true)}
+            >
+              {hasApiKey ? "ORS API key set" : "Set ORS API key"}
+            </button>
+          </div>
+
           {/* Transport mode */}
           <div className="isochrone-field">
             <span className="isochrone-label">Transport</span>
@@ -276,16 +378,6 @@ export default function IsochroneSection() {
             </div>
           )}
 
-          {!hasApiKey && (
-            <p className="isochrone-status isochrone-status--warn">
-              Requires a free ORS API key.{" "}
-              <a href="https://openrouteservice.org/dev/#/signup" target="_blank" rel="noreferrer">
-                Get one here
-              </a>
-              , then set <code>VITE_ORS_API_KEY</code> in your <code>.env</code>.
-            </p>
-          )}
-
           {isochroneLoading && (
             <p className="isochrone-status">Fetching isochrone...</p>
           )}
@@ -294,6 +386,10 @@ export default function IsochroneSection() {
             <p className="isochrone-status isochrone-status--error">{isochroneError}</p>
           )}
         </div>
+      )}
+
+      {showApiKeyModal && (
+        <ApiKeyModal onClose={handleModalClose} />
       )}
     </section>
   );

@@ -23,6 +23,11 @@ export interface ExportOptions {
   displayCountry: string;
   displayContinent?: string;
   fontFamily: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textVerticalAlign?: 'top' | 'middle' | 'bottom';
+  cityFontScale?: number;
+  countryFontScale?: number;
+  coordsFontScale?: number;
   showPosterText: boolean;
   showOverlay?: boolean;
   includeCredits?: boolean;

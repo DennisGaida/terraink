@@ -13,13 +13,34 @@ interface TypographySectionProps {
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => void;
   fontOptions: FontOption[];
+  onFieldChange: (name: string, value: string | boolean) => void;
 }
 
+
+const FONT_SCALES = [
+  { label: "S", value: "0.75" },
+  { label: "M", value: "1" },
+  { label: "L", value: "1.25" },
+  { label: "XL", value: "1.5" },
+];
+
+const ALIGN_OPTIONS: { label: string; value: 'left' | 'center' | 'right'; title: string }[] = [
+  { label: "\u2190", value: "left", title: "Align left" },
+  { label: "\u2194", value: "center", title: "Align center" },
+  { label: "\u2192", value: "right", title: "Align right" },
+];
+
+const VALIGN_OPTIONS: { label: string; value: 'top' | 'middle' | 'bottom'; title: string }[] = [
+  { label: "\u2191", value: "top", title: "Position top" },
+  { label: "\u2195", value: "middle", title: "Position middle" },
+  { label: "\u2193", value: "bottom", title: "Position bottom" },
+];
 
 export default function TypographySection({
   form,
   onChange,
   fontOptions,
+  onFieldChange,
 }: TypographySectionProps) {
   useEffect(() => {
     const families = fontOptions
@@ -116,6 +137,91 @@ export default function TypographySection({
             <span className="theme-switch-track" aria-hidden="true" />
           </span>
         </label>
+
+        {form.showPosterText && (
+          <>
+            <div className="text-options-row">
+              <span className="text-options-label">Alignment</span>
+              <div className="text-align-group" role="group" aria-label="Text alignment">
+                {ALIGN_OPTIONS.map(({ label, value, title }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={`text-align-btn${form.textAlign === value ? " is-active" : ""}`}
+                    title={title}
+                    onClick={() => onFieldChange("textAlign", value)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="text-options-row">
+              <span className="text-options-label">Position</span>
+              <div className="text-align-group" role="group" aria-label="Text vertical position">
+                {VALIGN_OPTIONS.map(({ label, value, title }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={`text-align-btn${form.textVerticalAlign === value ? " is-active" : ""}`}
+                    title={title}
+                    onClick={() => onFieldChange("textVerticalAlign", value)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="font-scale-group">
+              <div className="font-scale-row">
+                <span className="font-scale-label">City size</span>
+                <div className="font-scale-btns" role="group" aria-label="City font size">
+                  {FONT_SCALES.map(({ label, value }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className={`font-scale-btn${form.cityFontScale === value ? " is-active" : ""}`}
+                      onClick={() => onFieldChange("cityFontScale", value)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="font-scale-row">
+                <span className="font-scale-label">Country size</span>
+                <div className="font-scale-btns" role="group" aria-label="Country font size">
+                  {FONT_SCALES.map(({ label, value }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className={`font-scale-btn${form.countryFontScale === value ? " is-active" : ""}`}
+                      onClick={() => onFieldChange("countryFontScale", value)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="font-scale-row">
+                <span className="font-scale-label">Coords size</span>
+                <div className="font-scale-btns" role="group" aria-label="Coordinates font size">
+                  {FONT_SCALES.map(({ label, value }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className={`font-scale-btn${form.coordsFontScale === value ? " is-active" : ""}`}
+                      onClick={() => onFieldChange("coordsFontScale", value)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </section>
     </>
   );

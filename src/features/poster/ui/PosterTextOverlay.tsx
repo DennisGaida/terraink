@@ -12,7 +12,6 @@ import {
   COORDS_FONT_BASE_PX,
   ATTRIBUTION_FONT_BASE_PX,
   formatCityLabel,
-  computeCityFontScale,
   computeAttributionColor,
 } from "@/features/poster/domain/textLayout";
 
@@ -28,6 +27,11 @@ interface PosterTextOverlayProps {
   includeCredits: boolean;
   includeOsmAttribution: boolean;
   showOverlay: boolean;
+  textAlign?: 'left' | 'center' | 'right';
+  textVerticalAlign?: 'top' | 'middle' | 'bottom';
+  cityFontScale?: number;
+  countryFontScale?: number;
+  coordsFontScale?: number;
 }
 
 /**
@@ -47,6 +51,11 @@ export default function PosterTextOverlay({
   includeCredits,
   includeOsmAttribution,
   showOverlay,
+  textAlign = 'center',
+  textVerticalAlign = 'bottom',
+  cityFontScale = 1,
+  countryFontScale = 1,
+  coordsFontScale = 1,
 }: PosterTextOverlayProps) {
   const toCqMin = (px: number) => (px / TEXT_DIMENSION_REFERENCE_PX) * 100;
 
@@ -58,9 +67,56 @@ export default function PosterTextOverlay({
     : '"IBM Plex Mono", monospace';
 
   const cityLabel = formatCityLabel(city);
-  const cityFontSize = `${toCqMin(CITY_FONT_BASE_PX) * computeCityFontScale(city)}cqmin`;
-  const countryFontSize = `${toCqMin(COUNTRY_FONT_BASE_PX)}cqmin`;
-  const coordsFontSize = `${toCqMin(COORDS_FONT_BASE_PX)}cqmin`;
+
+  const cityLen = Math.max(city.length, 1);
+  const cityBaseSize = toCqMin(CITY_FONT_BASE_PX) * cityFontScale;
+  const cityMinSize = toCqMin(CITY_FONT_MIN_PX) * cityFontScale;
+  const cityFontSizeNum =
+    cityLen > CITY_TEXT_SHRINK_THRESHOLD
+      ? Math.max(cityMinSize, cityBaseSize * (CITY_TEXT_SHRINK_THRESHOLD / cityLen))
+      : cityBaseSize;
+  const cityFontSize = `${cityFontSizeNum}cqmin`;
+
+  // Scale=1 city size, for computing how much extra space the scaled text needs
+  const cityBaseScale1 = toCqMin(CITY_FONT_BASE_PX);
+  const cityFontSizeScale1 =
+    cityLen > CITY_TEXT_SHRINK_THRESHOLD
+      ? Math.max(toCqMin(CITY_FONT_MIN_PX), cityBaseScale1 * (CITY_TEXT_SHRINK_THRESHOLD / cityLen))
+      : cityBaseScale1;
+
+  const countryFontSize = `${toCqMin(COUNTRY_FONT_BASE_PX) * countryFontScale}cqmin`;
+  const coordsFontSize = `${toCqMin(COORDS_FONT_BASE_PX) * coordsFontScale}cqmin`;
+
+  // Extra half-heights compared to scale=1, in cqmin — used to push divider/country/coords down
+  const extraCityHalf = (cityFontSizeNum - cityFontSizeScale1) / 2;
+  const extraCountryHalf = (countryFontScale - 1) * toCqMin(COUNTRY_FONT_BASE_PX) / 2;
+
+  const blockMidRatio = (TEXT_CITY_Y_RATIO + TEXT_COORDS_Y_RATIO) / 2;
+  const vOffsetPct =
+    textVerticalAlign === 'top' ? ((1 - TEXT_COORDS_Y_RATIO) - TEXT_CITY_Y_RATIO) * 100 :
+    textVerticalAlign === 'middle' ? (0.5 - blockMidRatio) * 100 :
+    0;
+
+  const dynTop = (base: number, cqminOffset: number) => {
+    const pctPart = base * 100 + vOffsetPct;
+    if (cqminOffset !== 0) return `calc(${pctPart}% + ${cqminOffset}cqmin)`;
+    return `${pctPart}%`;
+  };
+
+  const edgePadding = `${TEXT_EDGE_MARGIN_RATIO * 2 * 100}%`;
+  const alignStyle: React.CSSProperties =
+    textAlign === 'left'
+      ? { textAlign: 'left', paddingLeft: edgePadding, paddingRight: 0 }
+      : textAlign === 'right'
+      ? { textAlign: 'right', paddingLeft: 0, paddingRight: edgePadding }
+      : { textAlign: 'center' };
+
+  const dividerStyle: React.CSSProperties =
+    textAlign === 'left'
+      ? { left: edgePadding, right: '70%' }
+      : textAlign === 'right'
+      ? { left: '70%', right: edgePadding }
+      : { left: '40%', right: '40%' };
   const attributionFontSize = `${toCqMin(ATTRIBUTION_FONT_BASE_PX)}cqmin`;
   const attributionColor = computeAttributionColor(textColor, landColor, showOverlay);
   const attributionOpacity = showOverlay ? 0.55 : 0.9;
@@ -73,8 +129,9 @@ export default function PosterTextOverlay({
             className="poster-city"
             style={{
               fontFamily: titleFont,
-              top: `${TEXT_CITY_Y_RATIO * 100}%`,
+              top: dynTop(TEXT_CITY_Y_RATIO, 0),
               fontSize: cityFontSize,
+              ...alignStyle,
             }}
           >
             {cityLabel}
@@ -83,15 +140,17 @@ export default function PosterTextOverlay({
             className="poster-divider"
             style={{
               borderColor: textColor,
-              top: `${TEXT_DIVIDER_Y_RATIO * 100}%`,
+              top: dynTop(TEXT_DIVIDER_Y_RATIO, extraCityHalf),
+              ...dividerStyle,
             }}
           />
           <p
             className="poster-country"
             style={{
               fontFamily: titleFont,
-              top: `${TEXT_COUNTRY_Y_RATIO * 100}%`,
+              top: dynTop(TEXT_COUNTRY_Y_RATIO, extraCityHalf),
               fontSize: countryFontSize,
+              ...alignStyle,
             }}
           >
             {country.toUpperCase()}
@@ -100,8 +159,9 @@ export default function PosterTextOverlay({
             className="poster-coords"
             style={{
               fontFamily: bodyFont,
-              top: `${TEXT_COORDS_Y_RATIO * 100}%`,
+              top: dynTop(TEXT_COORDS_Y_RATIO, extraCityHalf + extraCountryHalf),
               fontSize: coordsFontSize,
+              ...alignStyle,
             }}
           >
             {formatCoordinates(lat, lon)}

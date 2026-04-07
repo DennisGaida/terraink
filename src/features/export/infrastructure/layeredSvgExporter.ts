@@ -23,6 +23,11 @@ interface LayeredSvgOptions {
   displayCity: string;
   displayCountry: string;
   fontFamily?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textVerticalAlign?: 'top' | 'middle' | 'bottom';
+  cityFontScale?: number;
+  countryFontScale?: number;
+  coordsFontScale?: number;
   showPosterText: boolean;
   showOverlay: boolean;
   includeCredits: boolean;
@@ -78,6 +83,11 @@ export async function createLayeredSvgBlobFromMap({
   displayCity,
   displayCountry,
   fontFamily,
+  textAlign = 'center',
+  textVerticalAlign = 'bottom',
+  cityFontScale = 1,
+  countryFontScale = 1,
+  coordsFontScale = 1,
   showPosterText,
   showOverlay,
   includeCredits,
@@ -209,6 +219,11 @@ export async function createLayeredSvgBlobFromMap({
           showOverlay,
           includeCredits,
           includeOsmAttribution,
+          textAlign,
+          cityFontScale,
+          countryFontScale,
+          coordsFontScale,
+          textVerticalAlign,
         );
       }),
     });

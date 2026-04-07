@@ -80,7 +80,7 @@ export const DEFAULT_FORM: PosterForm = {
   showMarkers: true,
   includeIsochrone: false,
   isochroneMode: "walking",
-  isochroneRanges: "5,10,15",
+  isochroneRanges: "15,30,90",
   isochroneFillOpacity: "0.3",
   isochroneStrokeOpacity: "0.8",
   isochroneStrokeWidth: "2",

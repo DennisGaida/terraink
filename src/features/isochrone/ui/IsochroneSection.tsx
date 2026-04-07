@@ -13,7 +13,7 @@ const TRANSPORT_MODES: { value: IsochroneMode; label: string }[] = [
   { value: "driving", label: "Drive" },
 ];
 
-const PRESET_RANGES: number[] = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240];
+const PRESET_RANGES: number[] = [15, 30, 45, 60, 90, 120, 180, 240];
 const PRESET_COLORS = [
   "#0ea5e9", "#6366f1", "#f59e0b", "#10b981", "#ef4444", "#ec4899", "#8b5cf6",
 ];

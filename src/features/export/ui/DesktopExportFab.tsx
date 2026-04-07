@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useExport } from "@/features/export/application/useExport";
 import type { ExportFormat } from "@/features/export/domain/types";
-import { DownloadIcon, LoaderIcon } from "@/shared/ui/Icons";
+import { CheckIcon, DownloadIcon, LinkIcon, LoaderIcon } from "@/shared/ui/Icons";
 import SupportModal from "@/features/export/ui/SupportModal";
+import { usePosterContext } from "@/features/poster/ui/PosterContext";
+import { buildUrlSearchString } from "@/features/poster/application/urlState";
 
 export default function DesktopExportFab() {
   const {
@@ -13,11 +15,22 @@ export default function DesktopExportFab() {
     supportPrompt,
     dismissSupportPrompt,
   } = useExport();
+  const { state } = usePosterContext();
   const [activeFormat, setActiveFormat] = useState<ExportFormat | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!isExporting) setActiveFormat(null);
   }, [isExporting]);
+
+  const handleCopyLink = () => {
+    const search = buildUrlSearchString(state);
+    const url = `${window.location.origin}${window.location.pathname}?${search}`;
+    void navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   const isLoading = (fmt: ExportFormat) =>
     isExporting && activeFormat === fmt;
@@ -25,8 +38,18 @@ export default function DesktopExportFab() {
   return (
     <>
       <div className={`desktop-export-fab${isExporting ? " is-exporting" : ""}`}>
-        {/* SVG + PDF fly out above on hover */}
+        {/* SVG + PDF + Link fly out above on hover */}
         <div className="desktop-export-flyout">
+          <button
+            type="button"
+            className="desktop-export-btn desktop-export-btn--link"
+            onClick={handleCopyLink}
+          >
+            {copied
+              ? <CheckIcon className="desktop-export-btn-icon" />
+              : <LinkIcon className="desktop-export-btn-icon" />}
+            <span>{copied ? "Copied!" : "Copy Link"}</span>
+          </button>
           <button
             type="button"
             className="desktop-export-btn desktop-export-btn--svg"

@@ -101,6 +101,8 @@ export function useExport() {
 
         const lat = Number(form.latitude) || 0;
         const lon = Number(form.longitude) || 0;
+        const displayLat = Number(form.displayLatitude) || lat;
+        const displayLon = Number(form.displayLongitude) || lon;
 
         if (format === "svg") {
           const svgBlob = await createLayeredSvgBlobFromMap({
@@ -108,7 +110,7 @@ export function useExport() {
             exportWidth: size.width,
             exportHeight: size.height,
             theme: effectiveTheme,
-            center: { lat, lon },
+            center: { lat: displayLat, lon: displayLon },
             displayCity: form.displayCity || form.location || "",
             displayCountry: form.displayCountry || "",
             fontFamily: form.fontFamily.trim(),
@@ -149,7 +151,7 @@ export function useExport() {
         // 2. Composite fades + text
         const { canvas } = await compositeExport(mapCanvas, {
           theme: effectiveTheme,
-          center: { lat, lon },
+          center: { lat: displayLat, lon: displayLon },
           widthInches,
           heightInches,
           displayCity: form.displayCity || form.location || "",

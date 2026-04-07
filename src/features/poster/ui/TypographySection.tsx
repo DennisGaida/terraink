@@ -100,6 +100,26 @@ export default function TypographySection({
               placeholder={PLACEHOLDER_EXAMPLE_COUNTRY}
             />
           </label>
+          <label>
+            Display latitude
+            <input
+              className="form-control-tall"
+              name="displayLatitude"
+              value={form.displayLatitude}
+              onChange={onChange}
+              placeholder="52.3745"
+            />
+          </label>
+          <label>
+            Display longitude
+            <input
+              className="form-control-tall"
+              name="displayLongitude"
+              value={form.displayLongitude}
+              onChange={onChange}
+              placeholder="9.7385"
+            />
+          </label>
         </div>
         <label>
           Font

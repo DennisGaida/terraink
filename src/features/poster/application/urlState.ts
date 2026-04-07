@@ -15,6 +15,8 @@ const FORM_KEYS: Record<keyof PosterForm, string> = {
   displayCity: "city",
   displayCountry: "country",
   displayContinent: "continent",
+  displayLatitude: "displat",
+  displayLongitude: "displng",
   fontFamily: "font",
   showPosterText: "text",
   includeCredits: "credits",

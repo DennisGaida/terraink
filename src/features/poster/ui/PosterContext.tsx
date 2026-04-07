@@ -8,6 +8,11 @@ import {
   type ReactNode,
 } from "react";
 import {
+  hasUrlState,
+  parseUrlState,
+  buildUrlSearchString,
+} from "../application/urlState";
+import {
   posterReducer,
   type PosterState,
   type PosterAction,
@@ -79,7 +84,7 @@ export const DEFAULT_FORM: PosterForm = {
   showMarkers: true,
 };
 
-const INITIAL_STATE: PosterState = {
+const BASE_INITIAL_STATE: PosterState = {
   form: DEFAULT_FORM,
   customColors: {},
   markers: [],
@@ -100,6 +105,23 @@ const INITIAL_STATE: PosterState = {
     country: false,
   },
 };
+
+function buildInitialState(): PosterState {
+  const parsed = parseUrlState();
+  if (!parsed) return BASE_INITIAL_STATE;
+  return {
+    ...BASE_INITIAL_STATE,
+    form: { ...DEFAULT_FORM, ...parsed.form },
+    customColors: parsed.customColors,
+    markers: parsed.markers,
+    markerDefaults: {
+      ...BASE_INITIAL_STATE.markerDefaults,
+      ...parsed.markerDefaults,
+    },
+  };
+}
+
+const INITIAL_STATE = buildInitialState();
 
 /* ────── Context shapes ────── */
 
@@ -127,9 +149,18 @@ export function PosterProvider({ children }: { children: ReactNode }) {
   const mapRef = useRef(null) as MapInstanceRef;
   const lastSyncedMarkerThemeColorRef = useRef<string | null>(null);
   const hasLoadedCustomIconsRef = useRef(false);
+  const urlStateOnLoad = useRef(hasUrlState());
 
-  // Set initial position from browser geolocation (or Hanover fallback)
-  useGeolocation(dispatch);
+  // Set initial position from browser geolocation (or Hanover fallback).
+  // Skip when state was restored from URL params so the user's location
+  // does not overwrite the explicitly bookmarked coordinates.
+  useGeolocation(dispatch, urlStateOnLoad.current);
+
+  // Keep the URL in sync with current state so it can be bookmarked or shared
+  useEffect(() => {
+    const search = buildUrlSearchString(state);
+    history.replaceState(null, "", "?" + search);
+  }, [state.form, state.customColors, state.markers, state.markerDefaults]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selectedTheme = useMemo(
     () => getTheme(state.form.theme),

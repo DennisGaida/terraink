@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { isNativePlatform, onPlatformAdapterChange } from "@/core/platform";
 import maplibregl from "maplibre-gl";
-import MaplibreWorker from "maplibre-gl/dist/maplibre-gl-csp-worker?worker";
+import cspWorkerUrl from "maplibre-gl/dist/maplibre-gl-csp-worker?url";
 import App from "./App";
 import "./styles/index.css";
 
@@ -11,7 +11,7 @@ import "./styles/index.css";
 // (e.g. private-field accessors) to the outer module scope. The embedded
 // worker string then references those helpers but can't find them in its own
 // execution context, causing "Ne is not defined" when using GeoJSON sources.
-maplibregl.workerClass = MaplibreWorker as unknown as typeof Worker;
+maplibregl.setWorkerUrl(cspWorkerUrl);
 
 const syncDisplayMode = () => {
   const isStandalone =

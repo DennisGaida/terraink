@@ -43,4 +43,4 @@ export { triggerDownloadBlob } from "@/features/export/infrastructure/fileDownlo
 
 /* ── Isochrone ── */
 
-export { fetchIsochrone } from "@/features/isochrone/infrastructure/orsAdapter";
+export { fetchIsochrone } from "@/features/isochrone/infrastructure/hereAdapter";

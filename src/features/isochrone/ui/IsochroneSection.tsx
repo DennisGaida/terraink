@@ -2,9 +2,9 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { usePosterContext } from "@/features/poster/ui/PosterContext";
 import {
-  getOrsApiKey,
-  setOrsApiKey,
-} from "../infrastructure/orsApiKeyStorage";
+  getHereApiKey,
+  setHereApiKey,
+} from "../infrastructure/hereApiKeyStorage";
 import type { IsochroneMode } from "../domain/types";
 
 const TRANSPORT_MODES: { value: IsochroneMode; label: string }[] = [
@@ -13,17 +13,17 @@ const TRANSPORT_MODES: { value: IsochroneMode; label: string }[] = [
   { value: "driving", label: "Drive" },
 ];
 
-const PRESET_RANGES: number[] = [5, 10, 15, 20, 30, 45, 60];
+const PRESET_RANGES: number[] = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240];
 const PRESET_COLORS = [
   "#0ea5e9", "#6366f1", "#f59e0b", "#10b981", "#ef4444", "#ec4899", "#8b5cf6",
 ];
 
 function ApiKeyModal({ onClose }: { onClose: () => void }) {
-  const [value, setValue] = useState(getOrsApiKey);
+  const [value, setValue] = useState(getHereApiKey);
   const [saved, setSaved] = useState(false);
 
   function handleSave() {
-    setOrsApiKey(value.trim());
+    setHereApiKey(value.trim());
     setSaved(true);
     setTimeout(onClose, 600);
   }
@@ -38,11 +38,11 @@ function ApiKeyModal({ onClose }: { onClose: () => void }) {
         className="picker-modal isochrone-apikey-modal"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="ors-apikey-modal-title"
+        aria-labelledby="here-apikey-modal-title"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="picker-modal-header">
-          <h3 id="ors-apikey-modal-title">ORS API Key</h3>
+          <h3 id="here-apikey-modal-title">HERE API Key</h3>
           <button
             type="button"
             className="picker-modal-close"
@@ -54,13 +54,13 @@ function ApiKeyModal({ onClose }: { onClose: () => void }) {
         </div>
         <div className="isochrone-apikey-body">
           <p className="isochrone-apikey-hint">
-            A free API key from{" "}
+            An API key from{" "}
             <a
-              href="https://openrouteservice.org/dev/#/signup"
+              href="https://developer.here.com/sign-up"
               target="_blank"
               rel="noreferrer"
             >
-              openrouteservice.org
+              developer.here.com
             </a>{" "}
             is required. The key is stored only in your browser.
           </p>
@@ -69,7 +69,7 @@ function ApiKeyModal({ onClose }: { onClose: () => void }) {
             className="isochrone-apikey-input"
             value={value}
             onChange={(e) => { setValue(e.target.value); setSaved(false); }}
-            placeholder="Paste your ORS API key here"
+            placeholder="Paste your HERE API key here"
             autoFocus
             spellCheck={false}
           />
@@ -106,7 +106,7 @@ export default function IsochroneSection() {
   const [rangeInput, setRangeInput] = useState("");
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
-  const [hasApiKey, setHasApiKey] = useState(() => Boolean(getOrsApiKey()));
+  const [hasApiKey, setHasApiKey] = useState(() => Boolean(getHereApiKey()));
 
   function setField(name: string, value: string | boolean) {
     dispatch({ type: "SET_FIELD", name, value });
@@ -135,7 +135,7 @@ export default function IsochroneSection() {
 
   function handleRangeInputAdd() {
     const val = parseInt(rangeInput, 10);
-    if (Number.isFinite(val) && val > 0 && val <= 120) {
+    if (Number.isFinite(val) && val > 0 && val <= 360) {
       addRange(val);
       setRangeInput("");
     }
@@ -148,7 +148,7 @@ export default function IsochroneSection() {
 
   function handleModalClose() {
     setShowApiKeyModal(false);
-    setHasApiKey(Boolean(getOrsApiKey()));
+    setHasApiKey(Boolean(getHereApiKey()));
   }
 
   return (
@@ -175,7 +175,7 @@ export default function IsochroneSection() {
               className={`isochrone-apikey-btn${hasApiKey ? " is-set" : ""}`}
               onClick={() => setShowApiKeyModal(true)}
             >
-              {hasApiKey ? "ORS API key set" : "Set ORS API key"}
+              {hasApiKey ? "HERE API key set" : "Set HERE API key"}
             </button>
           </div>
 
@@ -219,7 +219,7 @@ export default function IsochroneSection() {
                   className="isochrone-range-input"
                   value={rangeInput}
                   min={1}
-                  max={120}
+                  max={360}
                   placeholder="min"
                   onChange={(e) => setRangeInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleRangeInputAdd()}

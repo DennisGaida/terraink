@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { PosterAction, PosterForm } from "@/features/poster/application/posterReducer";
 import { fetchIsochrone } from "@/core/services";
-import { getOrsApiKey, ORS_KEY_CHANGED_EVENT } from "../infrastructure/orsApiKeyStorage";
+import { getHereApiKey, HERE_KEY_CHANGED_EVENT } from "../infrastructure/hereApiKeyStorage";
 import { blendHex } from "@/shared/utils/color";
 import type { IsochroneContour } from "../domain/types";
 
@@ -35,14 +35,14 @@ export function useIsochrone(
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  const [apiKey, setApiKey] = useState(() => getOrsApiKey());
+  const [apiKey, setApiKey] = useState(() => getHereApiKey());
 
   useEffect(() => {
     function handleKeyChange() {
-      setApiKey(getOrsApiKey());
+      setApiKey(getHereApiKey());
     }
-    window.addEventListener(ORS_KEY_CHANGED_EVENT, handleKeyChange);
-    return () => window.removeEventListener(ORS_KEY_CHANGED_EVENT, handleKeyChange);
+    window.addEventListener(HERE_KEY_CHANGED_EVENT, handleKeyChange);
+    return () => window.removeEventListener(HERE_KEY_CHANGED_EVENT, handleKeyChange);
   }, []);
 
   const {

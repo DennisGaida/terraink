@@ -5,12 +5,9 @@ on:
     branches:
       - main
       - dev
+      - integration
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
-  pull_request:
-    branches:
-      - main
-      - dev
 
 env:
   REGISTRY: ghcr.io
@@ -31,7 +28,6 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to GHCR
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -48,17 +44,18 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            # branch pushes: main -> latest, dev -> dev
+            # main -> latest
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            # dev -> dev
             type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
-            # PR builds: pr-42
-            type=ref,event=pr
+            # integration -> integration
+            type=raw,value=integration,enable=${{ github.ref == 'refs/heads/integration' }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha

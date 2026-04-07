@@ -101,11 +101,28 @@ One logical change per commit. Subject: lowercase, imperative, no trailing perio
 
 ## Branch Strategy
 
+This is a fork. The strategy separates upstream-compatible work from local experimentation.
+
 ```text
-feature/fix branch → dev → beta → main
+upstream/dev
+     |
+     v
+   dev  (clean, tracks upstream — base for all upstream PRs)
+     |
+     +---> feature/*  ----+
+     +---> fix/*      ----+--> integration  (fork-only, all features merged)
+     +---> ci/*       ----+
+                               |
+                               v
+                             main  (stable releases, semver tags)
 ```
 
-All PRs target `dev`. Never open PRs against `main` or `beta`.
+- `dev` — stays clean and in sync with upstream. Never commit directly. All feature branches start here.
+- `feature/*` / `fix/*` / `ci/*` — based on `dev`, suitable for upstream PRs. One logical change each.
+- `integration` — fork-only sandbox. Merges all local branches for testing. Never filed upstream. Rebuild when `dev` advances.
+- `main` — stable. Only merges from `integration` when ready to release.
+
+All PRs to the upstream target `dev`. Never open upstream PRs from `integration` or `main`.
 
 ## Do Not
 

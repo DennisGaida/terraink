@@ -1,4 +1,3 @@
-import type { FeatureCollection } from "geojson";
 import type { ResolvedTheme } from "@/features/theme/domain/types";
 import { MAP_OVERZOOM_SCALE } from "@/features/map/infrastructure/constants";
 import { blendHex } from "@/shared/utils/color";
@@ -201,10 +200,6 @@ export function generateMapStyle(
     includeRoadMinorLow?: boolean;
     includeRoadOutline?: boolean;
     distanceMeters?: number;
-    isochroneGeoJson?: FeatureCollection | null;
-    isochroneFillOpacity?: number;
-    isochroneStrokeOpacity?: number;
-    isochroneStrokeWidth?: number;
   },
 ): StyleSpecification {
   const buildingFill =
@@ -226,10 +221,6 @@ export function generateMapStyle(
   const includeRoadMinorLow = options?.includeRoadMinorLow ?? true;
   const includeRoadOutline = options?.includeRoadOutline ?? true;
   const buildingMinZoom = resolveBuildingMinZoom(options?.distanceMeters);
-  const isochroneGeoJson = options?.isochroneGeoJson ?? null;
-  const isochroneFillOpacity = options?.isochroneFillOpacity ?? 0.3;
-  const isochroneStrokeOpacity = options?.isochroneStrokeOpacity ?? 0.8;
-  const isochroneStrokeWidth = options?.isochroneStrokeWidth ?? 2;
 
   const minorHighCasingStops = scaledStops(
     MAP_ROAD_MINOR_HIGH_DETAIL_WIDTH_STOPS,
@@ -289,9 +280,6 @@ export function generateMapStyle(
         url: OPENFREEMAP_SOURCE,
         maxzoom: SOURCE_MAX_ZOOM,
       },
-      ...(isochroneGeoJson
-        ? { isochrone: { type: "geojson" as const, data: isochroneGeoJson } }
-        : {}),
     },
     layers: [
       {
@@ -701,33 +689,6 @@ export function generateMapStyle(
         },
       },
 
-      ...(isochroneGeoJson
-        ? [
-            {
-              id: "isochrone-fill",
-              source: "isochrone",
-              type: "fill" as const,
-              paint: {
-                "fill-color": ["get", "fillColor"] as any,
-                "fill-opacity": isochroneFillOpacity,
-              },
-            },
-            {
-              id: "isochrone-stroke",
-              source: "isochrone",
-              type: "line" as const,
-              paint: {
-                "line-color": ["get", "color"] as any,
-                "line-opacity": isochroneStrokeOpacity,
-                "line-width": isochroneStrokeWidth,
-              },
-              layout: {
-                "line-cap": "round" as const,
-                "line-join": "round" as const,
-              },
-            },
-          ]
-        : []),
     ],
   };
 }

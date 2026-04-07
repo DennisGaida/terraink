@@ -2,6 +2,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import maplibregl from "maplibre-gl";
 import type { LayerSpecification, StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import type { FeatureCollection } from "geojson";
 import type { MapInstanceRef } from "@/features/map/domain/types";
 import {
   MAP_CENTER_SYNC_EPSILON,
@@ -83,6 +84,10 @@ interface MapPreviewProps {
   onMove?: (center: [number, number], zoom: number) => void;
   containerStyle?: CSSProperties;
   overzoomScale?: number;
+  isochroneGeoJson?: FeatureCollection | null;
+  isochroneFillOpacity?: number;
+  isochroneStrokeOpacity?: number;
+  isochroneStrokeWidth?: number;
 }
 
 /**
@@ -105,6 +110,10 @@ export default function MapPreview({
   onMove,
   containerStyle,
   overzoomScale = 1,
+  isochroneGeoJson = null,
+  isochroneFillOpacity = 0.3,
+  isochroneStrokeOpacity = 0.8,
+  isochroneStrokeWidth = 2,
 }: MapPreviewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isSyncing = useRef(false);
@@ -262,6 +271,63 @@ export default function MapPreview({
       isSyncing.current = false;
     });
   }, [center, zoom, mapRef]);
+
+  // Imperatively manage the isochrone source and layers so the base style
+  // never needs to be reloaded (avoids full setStyle() on GeoJSON changes).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    function apply() {
+      if (!map) return;
+      const hasSource = !!map.getSource("isochrone");
+
+      if (!isochroneGeoJson) {
+        if (hasSource) {
+          if (map.getLayer("isochrone-fill")) map.removeLayer("isochrone-fill");
+          if (map.getLayer("isochrone-stroke")) map.removeLayer("isochrone-stroke");
+          map.removeSource("isochrone");
+        }
+        return;
+      }
+
+      if (!hasSource) {
+        map.addSource("isochrone", { type: "geojson", data: isochroneGeoJson });
+        map.addLayer({
+          id: "isochrone-fill",
+          source: "isochrone",
+          type: "fill",
+          paint: {
+            "fill-color": ["get", "fillColor"],
+            "fill-opacity": isochroneFillOpacity,
+          },
+        });
+        map.addLayer({
+          id: "isochrone-stroke",
+          source: "isochrone",
+          type: "line",
+          paint: {
+            "line-color": ["get", "color"],
+            "line-opacity": isochroneStrokeOpacity,
+            "line-width": isochroneStrokeWidth,
+          },
+          layout: { "line-cap": "round", "line-join": "round" },
+        });
+      } else {
+        (map.getSource("isochrone") as maplibregl.GeoJSONSource).setData(isochroneGeoJson);
+        map.setPaintProperty("isochrone-fill", "fill-opacity", isochroneFillOpacity);
+        map.setPaintProperty("isochrone-stroke", "line-opacity", isochroneStrokeOpacity);
+        map.setPaintProperty("isochrone-stroke", "line-width", isochroneStrokeWidth);
+      }
+    }
+
+    if (map.isStyleLoaded()) {
+      apply();
+    } else {
+      map.once("load", apply);
+      return () => { map.off("load", apply); };
+    }
+  }, [mapRef, isochroneGeoJson, isochroneFillOpacity, isochroneStrokeOpacity, isochroneStrokeWidth]);
 
   const normalizedOverzoomScale = Math.max(1, overzoomScale);
   const innerStyle: CSSProperties =

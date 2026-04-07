@@ -8,11 +8,6 @@ import {
   type ReactNode,
 } from "react";
 import {
-  hasUrlState,
-  parseUrlState,
-  buildUrlSearchString,
-} from "../application/urlState";
-import {
   posterReducer,
   type PosterState,
   type PosterAction,
@@ -69,14 +64,7 @@ export const DEFAULT_FORM: PosterForm = {
   displayCity: "Hanover",
   displayCountry: "Germany",
   displayContinent: "Europe",
-  displayLatitude: DEFAULT_LAT.toFixed(4),
-  displayLongitude: DEFAULT_LON.toFixed(4),
   fontFamily: "",
-  textAlign: "center",
-  textVerticalAlign: "bottom",
-  cityFontScale: "1.25",
-  countryFontScale: "1",
-  coordsFontScale: "0.75",
   showPosterText: true,
   includeCredits: true,
   includeLandcover: true,
@@ -90,10 +78,9 @@ export const DEFAULT_FORM: PosterForm = {
   includeRoadMinorLow: true,
   includeRoadOutline: true,
   showMarkers: true,
-  includeOsmAttribution: true,
   includeIsochrone: false,
   isochroneMode: "walking",
-  isochroneRanges: "5,10,15",
+  isochroneRanges: "15,30,90",
   isochroneFillOpacity: "0.3",
   isochroneStrokeOpacity: "0.8",
   isochroneStrokeWidth: "2",
@@ -103,7 +90,7 @@ export const DEFAULT_FORM: PosterForm = {
   isochroneColor: "#0ea5e9",
 };
 
-const BASE_INITIAL_STATE: PosterState = {
+const INITIAL_STATE: PosterState = {
   form: DEFAULT_FORM,
   customColors: {},
   markers: [],
@@ -127,23 +114,6 @@ const BASE_INITIAL_STATE: PosterState = {
     country: false,
   },
 };
-
-function buildInitialState(): PosterState {
-  const parsed = parseUrlState();
-  if (!parsed) return BASE_INITIAL_STATE;
-  return {
-    ...BASE_INITIAL_STATE,
-    form: { ...DEFAULT_FORM, ...parsed.form },
-    customColors: parsed.customColors,
-    markers: parsed.markers,
-    markerDefaults: {
-      ...BASE_INITIAL_STATE.markerDefaults,
-      ...parsed.markerDefaults,
-    },
-  };
-}
-
-const INITIAL_STATE = buildInitialState();
 
 /* ────── Context shapes ────── */
 
@@ -171,18 +141,9 @@ export function PosterProvider({ children }: { children: ReactNode }) {
   const mapRef = useRef(null) as MapInstanceRef;
   const lastSyncedMarkerThemeColorRef = useRef<string | null>(null);
   const hasLoadedCustomIconsRef = useRef(false);
-  const urlStateOnLoad = useRef(hasUrlState());
 
-  // Set initial position from browser geolocation (or Hanover fallback).
-  // Skip when state was restored from URL params so the user's location
-  // does not overwrite the explicitly bookmarked coordinates.
-  useGeolocation(dispatch, urlStateOnLoad.current);
-
-  // Keep the URL in sync with current state so it can be bookmarked or shared
-  useEffect(() => {
-    const search = buildUrlSearchString(state);
-    history.replaceState(null, "", "?" + search);
-  }, [state.form, state.customColors, state.markers, state.markerDefaults]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Set initial position from browser geolocation (or Hanover fallback)
+  useGeolocation(dispatch);
 
   // Fetch isochrone data when enabled and relevant fields change
   useIsochrone(dispatch, state.form);

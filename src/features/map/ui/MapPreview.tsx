@@ -118,6 +118,7 @@ export default function MapPreview({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isSyncing = useRef(false);
   const hasMountedStyleRef = useRef(false);
+  const isochroneBlobUrlRef = useRef<string | null>(null);
   const prevStyleRef = useRef<StyleSpecification | null>(null);
   const onMoveEndRef = useRef(onMoveEnd);
   const onMoveRef = useRef(onMove);
@@ -274,9 +275,21 @@ export default function MapPreview({
 
   // Imperatively manage the isochrone source and layers so the base style
   // never needs to be reloaded (avoids full setStyle() on GeoJSON changes).
+  // Pass data as a blob URL so MapLibre fetches it instead of serializing
+  // it via postMessage to the worker (which fails in chunked production builds).
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
+
+    function makeBlobUrl(data: FeatureCollection): string {
+      if (isochroneBlobUrlRef.current) {
+        URL.revokeObjectURL(isochroneBlobUrlRef.current);
+      }
+      const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      isochroneBlobUrlRef.current = url;
+      return url;
+    }
 
     function apply() {
       if (!map) return;
@@ -288,11 +301,17 @@ export default function MapPreview({
           if (map.getLayer("isochrone-stroke")) map.removeLayer("isochrone-stroke");
           map.removeSource("isochrone");
         }
+        if (isochroneBlobUrlRef.current) {
+          URL.revokeObjectURL(isochroneBlobUrlRef.current);
+          isochroneBlobUrlRef.current = null;
+        }
         return;
       }
 
+      const blobUrl = makeBlobUrl(isochroneGeoJson);
+
       if (!hasSource) {
-        map.addSource("isochrone", { type: "geojson", data: isochroneGeoJson });
+        map.addSource("isochrone", { type: "geojson", data: blobUrl });
         map.addLayer({
           id: "isochrone-fill",
           source: "isochrone",
@@ -314,7 +333,7 @@ export default function MapPreview({
           layout: { "line-cap": "round", "line-join": "round" },
         });
       } else {
-        (map.getSource("isochrone") as maplibregl.GeoJSONSource).setData(isochroneGeoJson);
+        (map.getSource("isochrone") as maplibregl.GeoJSONSource).setData(blobUrl);
         map.setPaintProperty("isochrone-fill", "fill-opacity", isochroneFillOpacity);
         map.setPaintProperty("isochrone-stroke", "line-opacity", isochroneStrokeOpacity);
         map.setPaintProperty("isochrone-stroke", "line-width", isochroneStrokeWidth);

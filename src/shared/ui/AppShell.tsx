@@ -11,7 +11,6 @@ import PreviewPanel from "@/features/poster/ui/PreviewPanel";
 import MobileNavBar, { type MobileTab } from "@/shared/ui/MobileNavBar";
 import InstallPrompt from "@/features/install/ui/InstallPrompt";
 import { useSwipeDown } from "@/shared/hooks/useSwipeDown";
-import StartupLocationModal from "@/features/location/ui/StartupLocationModal";
 import { CheckIcon } from "@/shared/ui/Icons";
 
 const AboutModal = lazy(() => import("@/shared/ui/AboutModal"));
@@ -186,7 +185,6 @@ export default function AppShell() {
     >
       <GeneralHeader onAboutOpen={() => setAboutOpen(true)} />
       <InstallPrompt />
-      <StartupLocationModal />
 
       <DesktopNavBar
         activeTab={desktopTab}

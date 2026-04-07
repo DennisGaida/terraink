@@ -51,15 +51,16 @@ export async function fetchIsochrone(
   const sorted = [...request.contours].sort((a, b) => a.minutes - b.minutes);
   const rangeSeconds = sorted.map((c) => c.minutes * 60);
 
-  const params = new URLSearchParams({
-    transportMode,
-    origin: `${request.lat},${request.lon}`,
-    "range[type]": "time",
-    "range[values]": rangeSeconds.join(","),
-    apiKey,
-  });
+  // URLSearchParams encodes [ and ] which HERE does not accept — build manually.
+  const qs = [
+    `transportMode=${encodeURIComponent(transportMode)}`,
+    `origin=${encodeURIComponent(`${request.lat},${request.lon}`)}`,
+    `range[type]=time`,
+    `range[values]=${rangeSeconds.join(",")}`,
+    `apiKey=${encodeURIComponent(apiKey)}`,
+  ].join("&");
 
-  const res = await fetch(`${HERE_BASE}?${params}`, { signal });
+  const res = await fetch(`${HERE_BASE}?${qs}`, { signal });
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
@@ -67,6 +68,10 @@ export async function fetchIsochrone(
   }
 
   const data = (await res.json()) as HereResponse;
+
+  if (!Array.isArray(data.isolines)) {
+    throw new Error(`Unexpected HERE response: ${JSON.stringify(data).slice(0, 200)}`);
+  }
 
   const colorBySeconds = new Map(
     request.contours.map((c) => [c.minutes * 60, c.color]),

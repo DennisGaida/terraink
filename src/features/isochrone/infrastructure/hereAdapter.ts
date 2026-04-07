@@ -63,14 +63,21 @@ export async function fetchIsochrone(
     `apiKey=${encodeURIComponent(apiKey)}`,
   ].join("&");
 
-  const res = await fetch(`${HERE_BASE}?${qs}`, { signal });
+  const url = `${HERE_BASE}?${qs}`;
+  console.log("[isochrone] requesting:", url.replace(/apiKey=[^&]+/, "apiKey=REDACTED"));
+
+  const res = await fetch(url, { signal });
+
+  console.log("[isochrone] response status:", res.status);
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     throw new Error(`Isochrone request failed (${res.status}): ${text}`);
   }
 
-  const data = (await res.json()) as HereResponse;
+  const rawText = await res.text();
+  console.log("[isochrone] raw response:", rawText.slice(0, 500));
+  const data = JSON.parse(rawText) as HereResponse;
 
   if (!Array.isArray(data.isolines)) {
     throw new Error(`Unexpected HERE response: ${JSON.stringify(data).slice(0, 200)}`);

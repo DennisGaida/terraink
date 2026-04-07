@@ -1,4 +1,6 @@
+import type { FeatureCollection } from "geojson";
 import type { SearchResult } from "@/features/location/domain/types";
+import type { IsochroneMode } from "@/features/isochrone/domain/types";
 import type {
   MarkerDefaults,
   MarkerIconDefinition,
@@ -40,6 +42,16 @@ export interface PosterForm {
   includeRoadMinorLow: boolean;
   includeRoadOutline: boolean;
   showMarkers: boolean;
+  includeIsochrone: boolean;
+  isochroneMode: IsochroneMode;
+  isochroneRanges: string;
+  isochroneFillOpacity: string;
+  isochroneStrokeOpacity: string;
+  isochroneStrokeWidth: string;
+  isochroneCustomCenter: boolean;
+  isochroneCenterLat: string;
+  isochroneCenterLon: string;
+  isochroneColor: string;
 }
 
 /* ────── App-level state ────── */
@@ -52,6 +64,9 @@ export interface PosterState {
   markerDefaults: MarkerDefaults;
   isMarkerEditorActive: boolean;
   activeMarkerId: string | null;
+  isochroneGeoJson: FeatureCollection | null;
+  isochroneLoading: boolean;
+  isochroneError: string;
   error: string;
   isExporting: boolean;
   isLocationFocused: boolean;
@@ -97,7 +112,9 @@ export type PosterAction =
       defaults: Partial<MarkerDefaults>;
       applyToMarkers?: boolean;
     }
-  | { type: "RESET_MARKER_DEFAULTS" };
+  | { type: "RESET_MARKER_DEFAULTS" }
+  | { type: "SET_ISOCHRONE_DATA"; geoJson: FeatureCollection | null; error?: string }
+  | { type: "SET_ISOCHRONE_LOADING"; loading: boolean };
 
 /* ────── Reducer ────── */
 
@@ -365,6 +382,12 @@ export function posterReducer(
         })),
       };
     }
+
+    case "SET_ISOCHRONE_DATA":
+      return { ...state, isochroneGeoJson: action.geoJson, isochroneLoading: false, isochroneError: action.error ?? "" };
+
+    case "SET_ISOCHRONE_LOADING":
+      return { ...state, isochroneLoading: action.loading };
 
     default:
       return state;

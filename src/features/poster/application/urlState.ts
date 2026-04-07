@@ -28,6 +28,23 @@ const FORM_KEYS: Record<keyof PosterForm, string> = {
   includeRoadMinorLow: "rminor",
   includeRoadOutline: "routline",
   showMarkers: "mkshow",
+  includeOsmAttribution: "osm",
+  includeLandcover: "lcover",
+  textAlign: "talign",
+  textVerticalAlign: "tvalign",
+  cityFontScale: "cfscale",
+  countryFontScale: "ctryfscale",
+  coordsFontScale: "coordsfscale",
+  includeIsochrone: "iso",
+  isochroneMode: "isomode",
+  isochroneRanges: "isoranges",
+  isochroneFillOpacity: "isofill",
+  isochroneStrokeOpacity: "isostroke",
+  isochroneStrokeWidth: "isosw",
+  isochroneCustomCenter: "isocenter",
+  isochroneCenterLat: "isocenterlat",
+  isochroneCenterLon: "isocenterlon",
+  isochroneColor: "isocolor",
 };
 
 const REVERSE_FORM_KEYS: Record<string, keyof PosterForm> = Object.fromEntries(
@@ -47,6 +64,10 @@ const BOOL_FIELDS = new Set<keyof PosterForm>([
   "includeRoadMinorLow",
   "includeRoadOutline",
   "showMarkers",
+  "includeOsmAttribution",
+  "includeLandcover",
+  "includeIsochrone",
+  "isochroneCustomCenter",
 ]);
 
 /* ---- public API ---- */

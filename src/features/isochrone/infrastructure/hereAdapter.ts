@@ -51,12 +51,15 @@ export async function fetchIsochrone(
   const sorted = [...request.contours].sort((a, b) => a.minutes - b.minutes);
   const rangeSeconds = sorted.map((c) => c.minutes * 60);
 
-  // URLSearchParams encodes [ and ] which HERE does not accept — build manually.
+  // Build query string manually. Brackets must be percent-encoded (%5B/%5D)
+  // so Firefox accepts the URL; HERE decodes them server-side. Commas in
+  // range[values] are left literal — HERE expects them unencoded.
+  // encodeURIComponent on origin encodes the comma, which HERE also decodes fine.
   const qs = [
     `transportMode=${encodeURIComponent(transportMode)}`,
-    `origin=${encodeURIComponent(`${request.lat},${request.lon}`)}`,
-    `range[type]=time`,
-    `range[values]=${rangeSeconds.join(",")}`,
+    `origin=${request.lat},${request.lon}`,
+    `range%5Btype%5D=time`,
+    `range%5Bvalues%5D=${rangeSeconds.join(",")}`,
     `apiKey=${encodeURIComponent(apiKey)}`,
   ].join("&");
 

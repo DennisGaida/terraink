@@ -15,6 +15,9 @@ const FORM_KEYS: Record<keyof PosterForm, string> = {
   displayCity: "city",
   displayCountry: "country",
   displayContinent: "continent",
+  displayLatitude: "displat",
+  displayLongitude: "displng",
+  includeLandcover: "lc",
   fontFamily: "font",
   showPosterText: "text",
   includeCredits: "credits",
@@ -37,6 +40,7 @@ const REVERSE_FORM_KEYS: Record<string, keyof PosterForm> = Object.fromEntries(
 const BOOL_FIELDS = new Set<keyof PosterForm>([
   "showPosterText",
   "includeCredits",
+  "includeLandcover",
   "includeBuildings",
   "includeWater",
   "includeParks",

@@ -67,6 +67,8 @@ export const DEFAULT_FORM: PosterForm = {
   displayCity: "Hanover",
   displayCountry: "Germany",
   displayContinent: "Europe",
+  displayLatitude: DEFAULT_LAT.toFixed(4),
+  displayLongitude: DEFAULT_LON.toFixed(4),
   fontFamily: "",
   showPosterText: true,
   includeCredits: true,

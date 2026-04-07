@@ -166,6 +166,8 @@ export default function PreviewPanel() {
   const aspect = widthCm / heightCm;
   const formLat = Number(form.latitude) || 0;
   const formLon = Number(form.longitude) || 0;
+  const displayLat = Number(form.displayLatitude) || formLat;
+  const displayLon = Number(form.displayLongitude) || formLon;
   const layoutOption =
     getLayoutOption(form.layout) ?? createCustomLayoutOption(widthCm, heightCm);
   const posterSizeLabel = formatLayoutDimensions(layoutOption);
@@ -439,8 +441,8 @@ export default function PreviewPanel() {
           <PosterTextOverlay
             city={cityLabel}
             country={countryLabel}
-            lat={formLat}
-            lon={formLon}
+            lat={displayLat}
+            lon={displayLon}
             fontFamily={form.fontFamily}
             textColor={effectiveTheme.ui.text}
             landColor={effectiveTheme.map.land}

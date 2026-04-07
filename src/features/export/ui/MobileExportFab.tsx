@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useExport } from "@/features/export/application/useExport";
 import type { ExportFormat } from "@/features/export/domain/types";
-import { CloseIcon, DownloadIcon, LoaderIcon } from "@/shared/ui/Icons";
+import { CheckIcon, CloseIcon, DownloadIcon, LinkIcon, LoaderIcon } from "@/shared/ui/Icons";
 import SupportModal from "@/features/export/ui/SupportModal";
 import SocialLinkGroup from "@/shared/ui/SocialLinkGroup";
+import { usePosterContext } from "@/features/poster/ui/PosterContext";
+import { buildUrlSearchString } from "@/features/poster/application/urlState";
 
 export default function MobileExportFab() {
   const {
@@ -14,9 +16,11 @@ export default function MobileExportFab() {
     supportPrompt,
     dismissSupportPrompt,
   } = useExport();
+  const { state } = usePosterContext();
   const [isOpen, setIsOpen] = useState(false);
   const [activeFormat, setActiveFormat] = useState<ExportFormat | null>(null);
   const [isTriggerVisible, setIsTriggerVisible] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!isExporting && activeFormat) {
@@ -61,6 +65,15 @@ export default function MobileExportFab() {
   const isLoading = (format: ExportFormat) =>
     isExporting && activeFormat === format;
 
+  const handleCopyLink = () => {
+    const search = buildUrlSearchString(state);
+    const url = `${window.location.origin}${window.location.pathname}?${search}`;
+    void navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
     <>
       <button
@@ -100,6 +113,16 @@ export default function MobileExportFab() {
               </button>
             </div>
             <div className="mobile-export-modal-actions">
+              <button
+                type="button"
+                className="mobile-export-option mobile-export-option--link"
+                onClick={handleCopyLink}
+              >
+                {copied
+                  ? <CheckIcon className="mobile-export-option-icon" />
+                  : <LinkIcon className="mobile-export-option-icon" />}
+                <span>{copied ? "Copied!" : "Copy Link"}</span>
+              </button>
               <button
                 type="button"
                 className="mobile-export-option mobile-export-option--png"

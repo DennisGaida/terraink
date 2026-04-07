@@ -10,7 +10,6 @@ import {
 import {
   hasUrlState,
   parseUrlState,
-  buildUrlSearchString,
 } from "../application/urlState";
 import {
   posterReducer,
@@ -155,12 +154,6 @@ export function PosterProvider({ children }: { children: ReactNode }) {
   // Skip when state was restored from URL params so the user's location
   // does not overwrite the explicitly bookmarked coordinates.
   useGeolocation(dispatch, urlStateOnLoad.current);
-
-  // Keep the URL in sync with current state so it can be bookmarked or shared
-  useEffect(() => {
-    const search = buildUrlSearchString(state);
-    history.replaceState(null, "", "?" + search);
-  }, [state.form, state.customColors, state.markers, state.markerDefaults]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selectedTheme = useMemo(
     () => getTheme(state.form.theme),

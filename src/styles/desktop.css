@@ -1164,7 +1164,7 @@
   .desktop-export-fab:hover .desktop-export-flyout,
   .desktop-export-fab:focus-within .desktop-export-flyout,
   .desktop-export-fab.is-exporting .desktop-export-flyout {
-    max-height: 180px;
+    max-height: 260px;
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0);
@@ -1226,6 +1226,19 @@
     background: rgba(65, 30, 10, 0.96);
     border-color: rgba(255, 142, 94, 0.64);
     color: #ffd5be;
+  }
+
+  /* Link — muted blue, distinct from download formats */
+  .desktop-export-btn--link {
+    background: rgba(12, 42, 72, 0.92);
+    border-color: rgba(90, 160, 220, 0.36);
+    color: #a8d4f5;
+  }
+
+  .desktop-export-btn--link:hover {
+    background: rgba(18, 56, 92, 0.96);
+    border-color: rgba(90, 160, 220, 0.64);
+    color: #c2e2ff;
   }
 
   /* SVG — solid dark green, like mobile export-map-btn */

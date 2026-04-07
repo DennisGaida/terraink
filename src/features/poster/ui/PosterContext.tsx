@@ -220,10 +220,6 @@ export function PosterProvider({ children }: { children: ReactNode }) {
         includeRoadMinorLow: state.form.includeRoadMinorLow,
         includeRoadOutline: state.form.includeRoadOutline,
         distanceMeters: Number(state.form.distance),
-        isochroneGeoJson: state.form.includeIsochrone ? state.isochroneGeoJson : null,
-        isochroneFillOpacity: Number(state.form.isochroneFillOpacity),
-        isochroneStrokeOpacity: Number(state.form.isochroneStrokeOpacity),
-        isochroneStrokeWidth: Number(state.form.isochroneStrokeWidth),
       }),
     [
       effectiveTheme,
@@ -238,11 +234,6 @@ export function PosterProvider({ children }: { children: ReactNode }) {
       state.form.includeRoadMinorLow,
       state.form.includeRoadOutline,
       state.form.distance,
-      state.form.includeIsochrone,
-      state.form.isochroneFillOpacity,
-      state.form.isochroneStrokeOpacity,
-      state.form.isochroneStrokeWidth,
-      state.isochroneGeoJson,
     ],
   );
 

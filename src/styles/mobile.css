@@ -629,6 +629,12 @@
     opacity: 0.6;
   }
 
+  .mobile-export-option--link {
+    background: rgba(12, 42, 72, 0.92);
+    border-color: rgba(90, 160, 220, 0.36);
+    color: #a8d4f5;
+  }
+
   .mobile-export-option--png {
     background: rgba(231, 242, 250, 0.96);
     border-color: rgba(165, 198, 221, 0.34);

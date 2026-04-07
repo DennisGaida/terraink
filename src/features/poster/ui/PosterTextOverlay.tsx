@@ -187,7 +187,7 @@ export default function PosterTextOverlay({
         </span>
       )}
 
-      {includeCredits && (
+      {includeOsmAttribution && includeCredits && (
         <span
           className="poster-credits"
           style={{

@@ -142,7 +142,7 @@ export function drawPosterText(
     ctx.globalAlpha = 1;
   }
 
-  if (includeCredits) {
+  if (includeOsmAttribution && includeCredits) {
     ctx.fillStyle = attributionColor;
     ctx.globalAlpha = attributionAlpha;
     ctx.textAlign = "left";

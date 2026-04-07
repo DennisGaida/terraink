@@ -126,7 +126,7 @@ export default function TypographySection({
         </label>
 
         <label className="toggle-field">
-          <span>OSM Attribution</span>
+          <span>Attribution</span>
           <span className="theme-switch">
             <input
               type="checkbox"
@@ -222,6 +222,7 @@ export default function TypographySection({
             </div>
           </>
         )}
+
       </section>
     </>
   );

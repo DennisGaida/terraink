@@ -102,7 +102,7 @@ export function parseUrlState(): ParsedUrlState | null {
 
   for (const [key, field] of Object.entries(REVERSE_FORM_KEYS)) {
     const raw = p.get(key);
-    if (raw === null) continue;
+    if (raw === null || raw === "undefined") continue;
 
     if (BOOL_FIELDS.has(field)) {
       (form as Record<string, boolean | string>)[field] = raw === "1";
@@ -166,6 +166,7 @@ export function buildUrlSearchString(state: PosterState): string {
 
   for (const [field, key] of Object.entries(FORM_KEYS) as [keyof PosterForm, string][]) {
     const val = f[field];
+    if (val === undefined || val === null) continue;
     if (BOOL_FIELDS.has(field)) {
       p.set(key, (val as boolean) ? "1" : "0");
     } else {

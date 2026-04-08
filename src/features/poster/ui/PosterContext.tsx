@@ -26,6 +26,7 @@ import {
   loadCustomMarkerIcons,
   saveCustomMarkerIcons,
 } from "@/features/markers/infrastructure/customIconStorage";
+import { parseUrlState, hasUrlState } from "../application/urlState";
 
 /* ────── Default form (moved from appConfig) ────── */
 
@@ -137,7 +138,17 @@ const PosterContext = createContext<PosterContextValue | null>(null);
 /* ────── Provider ────── */
 
 export function PosterProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(posterReducer, INITIAL_STATE);
+  const [state, dispatch] = useReducer(posterReducer, undefined, () => {
+    const urlState = parseUrlState();
+    if (!urlState) return INITIAL_STATE;
+    return {
+      ...INITIAL_STATE,
+      form: { ...INITIAL_STATE.form, ...urlState.form },
+      customColors: urlState.customColors,
+      markers: urlState.markers,
+      markerDefaults: { ...INITIAL_STATE.markerDefaults, ...urlState.markerDefaults },
+    };
+  });
   const mapRef = useRef(null) as MapInstanceRef;
   const lastSyncedMarkerThemeColorRef = useRef<string | null>(null);
   const hasLoadedCustomIconsRef = useRef(false);

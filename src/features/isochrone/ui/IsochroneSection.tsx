@@ -321,7 +321,7 @@ export default function IsochroneSection() {
               <input
                 type="range"
                 min="0.5"
-                max="6"
+                max="20"
                 step="0.5"
                 value={form.isochroneStrokeWidth}
                 onChange={(e) => setField("isochroneStrokeWidth", e.target.value)}

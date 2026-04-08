@@ -122,6 +122,16 @@ upstream/dev
 - `integration` — fork-only sandbox. Merges all local branches for testing. Never filed upstream. Rebuild when `dev` advances.
 - `main` — stable. Only merges from `integration` when ready to release.
 
+### integration branch rules
+
+`integration` must only contain merge commits and integration-specific glue commits. Never commit feature work directly to `integration`.
+
+Allowed direct commits on `integration`:
+- Type-error or conflict fixes that arise specifically from merging multiple branches together (scope: `integration`)
+- Nothing else
+
+When adding a new feature or fix, always create a `feature/*` / `fix/*` / `ci/*` branch from `dev`, develop there, then merge into `integration` with `--no-ff`. Never develop on `integration` directly.
+
 All PRs to the upstream target `dev`. Never open upstream PRs from `integration` or `main`.
 
 ## Do Not

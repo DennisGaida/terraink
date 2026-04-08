@@ -17,7 +17,7 @@ import MapDimensionFields from "./MapDimensionFields";
 import ColorPicker from "@/features/theme/ui/ColorPicker";
 import ThemeColorEditor from "@/features/theme/ui/ThemeColorEditor";
 import ThemeSummarySection from "@/features/theme/ui/ThemeSummarySection";
-import { CheckIcon, EditIcon } from "@/shared/ui/Icons";
+import { CheckIcon, EditIcon, RotateIcon } from "@/shared/ui/Icons";
 import type { ResolvedTheme } from "@/features/theme/domain/types";
 import type { LayoutGroup } from "@/features/layout/domain/types";
 
@@ -47,6 +47,7 @@ interface MapSettingsSectionProps {
   onNumericFieldBlur: (event: React.FocusEvent<HTMLInputElement>) => void;
   onThemeChange: (themeId: string) => void;
   onLayoutChange: (layoutId: string) => void;
+  onFlipOrientation: () => void;
   selectedTheme: ResolvedTheme;
   themeOptions: ThemeOption[];
   layoutGroups: LayoutGroup[];
@@ -65,6 +66,7 @@ export default function MapSettingsSection({
   onNumericFieldBlur,
   onThemeChange,
   onLayoutChange,
+  onFlipOrientation,
   selectedTheme,
   themeOptions,
   layoutGroups,
@@ -388,6 +390,17 @@ export default function MapSettingsSection({
               {selectedLayoutDescription}
             </p>
           </div>
+          <button
+            type="button"
+            className="theme-customize-btn"
+            onClick={onFlipOrientation}
+            aria-label="Flip orientation"
+            title="Flip orientation"
+          >
+            <span className="theme-customize-icon" aria-hidden="true">
+              <RotateIcon />
+            </span>
+          </button>
           {isLayoutEditing ? (
             <button
               type="button"

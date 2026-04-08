@@ -8,10 +8,6 @@ import {
   type ReactNode,
 } from "react";
 import {
-  hasUrlState,
-  parseUrlState,
-} from "../application/urlState";
-import {
   posterReducer,
   type PosterState,
   type PosterAction,
@@ -118,6 +114,12 @@ function buildInitialState(): PosterState {
       ...BASE_INITIAL_STATE.markerDefaults,
       ...parsed.markerDefaults,
     },
+    // Treat URL-provided display names as user overrides so reverse geocode
+    // on mount does not overwrite them with the nominatim result.
+    displayNameOverrides: {
+      city: "displayCity" in parsed.form,
+      country: "displayCountry" in parsed.form,
+    },
   };
 }
 
@@ -145,17 +147,7 @@ const PosterContext = createContext<PosterContextValue | null>(null);
 /* ────── Provider ────── */
 
 export function PosterProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(posterReducer, undefined, () => {
-    const urlState = parseUrlState();
-    if (!urlState) return INITIAL_STATE;
-    return {
-      ...INITIAL_STATE,
-      form: { ...INITIAL_STATE.form, ...urlState.form },
-      customColors: urlState.customColors,
-      markers: urlState.markers,
-      markerDefaults: { ...INITIAL_STATE.markerDefaults, ...urlState.markerDefaults },
-    };
-  });
+  const [state, dispatch] = useReducer(posterReducer, INITIAL_STATE);
   const mapRef = useRef(null) as MapInstanceRef;
   const lastSyncedMarkerThemeColorRef = useRef<string | null>(null);
   const hasLoadedCustomIconsRef = useRef(false);

@@ -83,12 +83,21 @@ export function resolveExportRenderParams(
 ): ExportRenderParams {
   const internalMapContainer = map.getContainer();
   const visibleContainer = internalMapContainer.parentElement;
+
+  // Derive the actual overzoom scale from the DOM so the export matches the
+  // live preview even when adaptive overzoom has scaled beyond the static
+  // MAP_OVERZOOM_SCALE (e.g. on small mobile viewports).
+  const actualOverzoomScale =
+    visibleContainer && visibleContainer.clientWidth > 0
+      ? internalMapContainer.clientWidth / visibleContainer.clientWidth
+      : MAP_OVERZOOM_SCALE;
+
   const visiblePreviewWidth =
     visibleContainer?.clientWidth ||
-    Math.round(internalMapContainer.clientWidth / MAP_OVERZOOM_SCALE);
+    Math.round(internalMapContainer.clientWidth / actualOverzoomScale);
   const visiblePreviewHeight =
     visibleContainer?.clientHeight ||
-    Math.round(internalMapContainer.clientHeight / MAP_OVERZOOM_SCALE);
+    Math.round(internalMapContainer.clientHeight / actualOverzoomScale);
   const previewWidth = Math.max(visiblePreviewWidth, 1);
   const previewHeight = Math.max(visiblePreviewHeight, 1);
 
@@ -102,9 +111,9 @@ export function resolveExportRenderParams(
   const heightScale = Math.max(exportHeight / previewHeight, 1);
   const basePixelRatio = Math.max(widthScale, heightScale, 1);
 
-  const renderWidth = Math.max(1, Math.round(previewWidth * MAP_OVERZOOM_SCALE));
-  const renderHeight = Math.max(1, Math.round(previewHeight * MAP_OVERZOOM_SCALE));
-  const pixelRatio = Math.max(basePixelRatio / MAP_OVERZOOM_SCALE, 1);
+  const renderWidth = Math.max(1, Math.round(previewWidth * actualOverzoomScale));
+  const renderHeight = Math.max(1, Math.round(previewHeight * actualOverzoomScale));
+  const pixelRatio = Math.max(basePixelRatio / actualOverzoomScale, 1);
 
   const markerProjection: MarkerProjectionInput = {
     centerLat: center.lat,
@@ -129,6 +138,6 @@ export function resolveExportRenderParams(
     markerProjection,
     markerScaleX: exportWidth / renderWidth,
     markerScaleY: exportHeight / renderHeight,
-    markerSizeScale: MAP_OVERZOOM_SCALE,
+    markerSizeScale: actualOverzoomScale,
   };
 }

@@ -61,6 +61,8 @@ export function useExport() {
   );
   const { form } = state;
   const hasVisibleMarkers = form.showMarkers && state.markers.length > 0;
+  const hasIsochroneLabels =
+    form.includeIsochrone && form.isochroneShowLabels && state.isochroneGeoJson != null;
 
   const registerSuccessfulExport = useCallback(() => {
     const nextCount = readPosterExportCount() + 1;
@@ -119,6 +121,9 @@ export function useExport() {
             markerIcons: hasVisibleMarkers
               ? getAllMarkerIcons(state.customMarkerIcons)
               : [],
+            isochroneGeoJson: hasIsochroneLabels ? state.isochroneGeoJson : null,
+            isochroneShowLabels: hasIsochroneLabels,
+            isochroneStrokeOpacity: Number(form.isochroneStrokeOpacity),
           });
           const svgFilename = createPosterFilename(
             form.displayCity || form.location,
@@ -156,10 +161,13 @@ export function useExport() {
           markerIcons: hasVisibleMarkers
             ? getAllMarkerIcons(state.customMarkerIcons)
             : [],
-          markerProjection: hasVisibleMarkers ? markerProjection : undefined,
-          markerScaleX: hasVisibleMarkers ? markerScaleX : undefined,
-          markerScaleY: hasVisibleMarkers ? markerScaleY : undefined,
+          markerProjection: (hasVisibleMarkers || hasIsochroneLabels) ? markerProjection : undefined,
+          markerScaleX: (hasVisibleMarkers || hasIsochroneLabels) ? markerScaleX : undefined,
+          markerScaleY: (hasVisibleMarkers || hasIsochroneLabels) ? markerScaleY : undefined,
           markerSizeScale: hasVisibleMarkers ? markerSizeScale : undefined,
+          isochroneGeoJson: hasIsochroneLabels ? state.isochroneGeoJson : null,
+          isochroneShowLabels: hasIsochroneLabels,
+          isochroneStrokeOpacity: Number(form.isochroneStrokeOpacity),
         });
 
         // 3. Download
@@ -196,6 +204,8 @@ export function useExport() {
       registerSuccessfulExport,
       state.markers,
       state.customMarkerIcons,
+      hasIsochroneLabels,
+      state.isochroneGeoJson,
     ],
   );
 

@@ -1,3 +1,4 @@
+import type { FeatureCollection } from "geojson";
 import type { ResolvedTheme } from "@/features/theme/domain/types";
 import type {
   MarkerIconDefinition,
@@ -38,6 +39,9 @@ export interface ExportOptions {
   markerScaleX?: number;
   markerScaleY?: number;
   markerSizeScale?: number;
+  isochroneGeoJson?: FeatureCollection | null;
+  isochroneShowLabels?: boolean;
+  isochroneStrokeOpacity?: number;
 }
 
 export interface Typography {

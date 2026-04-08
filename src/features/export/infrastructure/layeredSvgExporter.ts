@@ -1,10 +1,12 @@
 import maplibregl from "maplibre-gl";
 import type { Map as MaplibreMap } from "maplibre-gl";
+import type { FeatureCollection } from "geojson";
 import type {
   MarkerIconDefinition,
   MarkerItem,
 } from "@/features/markers/domain/types";
 import { drawMarkersOnCanvas } from "@/features/markers/infrastructure/rendering";
+import { drawIsochroneLabelsOnCanvas } from "@/features/isochrone/infrastructure/labelRenderer";
 import { applyFades } from "@/features/poster/infrastructure/renderer/layers";
 import { drawPosterText } from "@/features/poster/infrastructure/renderer/typography";
 import type { ResolvedTheme } from "@/features/theme/domain/types";
@@ -34,6 +36,9 @@ interface LayeredSvgOptions {
   includeOsmAttribution?: boolean;
   markers: MarkerItem[];
   markerIcons: MarkerIconDefinition[];
+  isochroneGeoJson?: FeatureCollection | null;
+  isochroneShowLabels?: boolean;
+  isochroneStrokeOpacity?: number;
 }
 
 function renderMapCanvasToDataUrl(
@@ -94,6 +99,9 @@ export async function createLayeredSvgBlobFromMap({
   includeOsmAttribution = true,
   markers,
   markerIcons,
+  isochroneGeoJson,
+  isochroneShowLabels = false,
+  isochroneStrokeOpacity = 0.8,
 }: LayeredSvgOptions): Promise<Blob> {
   await waitForMapIdle(map);
 
@@ -199,6 +207,30 @@ export async function createLayeredSvgBlobFromMap({
         overlayLayers.push({
           id: "markers",
           dataUrl: markersCanvas.toDataURL("image/png"),
+        });
+      }
+    }
+
+    if (isochroneShowLabels && isochroneGeoJson) {
+      const isoLabelsCanvas = document.createElement("canvas");
+      isoLabelsCanvas.width = exportWidth;
+      isoLabelsCanvas.height = exportHeight;
+      const isoLabelsCtx = isoLabelsCanvas.getContext("2d");
+      if (isoLabelsCtx) {
+        drawIsochroneLabelsOnCanvas(
+          isoLabelsCtx,
+          isochroneGeoJson,
+          markerProjection,
+          markerScaleX,
+          markerScaleY,
+          exportWidth,
+          exportHeight,
+          isochroneStrokeOpacity,
+          fontFamily ?? "",
+        );
+        overlayLayers.push({
+          id: "isochrone-labels",
+          dataUrl: isoLabelsCanvas.toDataURL("image/png"),
         });
       }
     }

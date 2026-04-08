@@ -1,6 +1,7 @@
 import { applyFades } from "./layers";
 import { drawPosterText } from "./typography";
 import { drawMarkersOnCanvas } from "@/features/markers/infrastructure/rendering";
+import { drawIsochroneLabelsOnCanvas } from "@/features/isochrone/infrastructure/labelRenderer";
 import type { ExportOptions, CanvasSize } from "../../domain/types";
 
 /**
@@ -39,6 +40,9 @@ export async function compositeExport(
     markerScaleX = 1,
     markerScaleY = 1,
     markerSizeScale = 1,
+    isochroneGeoJson,
+    isochroneShowLabels = false,
+    isochroneStrokeOpacity = 0.8,
   } = options;
 
   const width = mapCanvas.width;
@@ -59,7 +63,22 @@ export async function compositeExport(
     applyFades(ctx, width, height, theme.ui.bg);
   }
 
-  // 3. Markers
+  // 3. Isochrone labels
+  if (isochroneShowLabels && isochroneGeoJson && markerProjection) {
+    drawIsochroneLabelsOnCanvas(
+      ctx,
+      isochroneGeoJson,
+      markerProjection,
+      markerScaleX,
+      markerScaleY,
+      width,
+      height,
+      isochroneStrokeOpacity,
+      fontFamily,
+    );
+  }
+
+  // 4. Markers
   if (markers.length > 0 && markerIcons.length > 0 && markerProjection) {
     await drawMarkersOnCanvas(
       ctx,
@@ -72,7 +91,7 @@ export async function compositeExport(
     );
   }
 
-  // 4. Poster text
+  // 5. Poster text
   drawPosterText(
     ctx,
     width,

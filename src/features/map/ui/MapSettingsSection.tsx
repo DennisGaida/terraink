@@ -17,7 +17,7 @@ import MapDimensionFields from "./MapDimensionFields";
 import ColorPicker from "@/features/theme/ui/ColorPicker";
 import ThemeColorEditor from "@/features/theme/ui/ThemeColorEditor";
 import ThemeSummarySection from "@/features/theme/ui/ThemeSummarySection";
-import { CheckIcon, EditIcon, RotateIcon } from "@/shared/ui/Icons";
+import { CheckIcon, EditIcon, FlipOrientationIcon } from "@/shared/ui/Icons";
 import type { ResolvedTheme } from "@/features/theme/domain/types";
 import type { LayoutGroup } from "@/features/layout/domain/types";
 
@@ -398,7 +398,7 @@ export default function MapSettingsSection({
             title="Flip orientation"
           >
             <span className="theme-customize-icon" aria-hidden="true">
-              <RotateIcon />
+              <FlipOrientationIcon />
             </span>
           </button>
           {isLayoutEditing ? (

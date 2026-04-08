@@ -124,6 +124,27 @@ export function useFormHandlers() {
     [dispatch],
   );
 
+  const handleFlipOrientation = useCallback(() => {
+    const w = Number(state.form.width);
+    const h = Number(state.form.height);
+    if (!Number.isFinite(w) || !Number.isFinite(h)) return;
+    dispatch({
+      type: "SET_FORM_FIELDS",
+      fields: {
+        width: formatLayoutCm(h),
+        height: formatLayoutCm(w),
+        layout: resolveLayoutIdForSize(
+          h,
+          w,
+          state.form.layout,
+          LAYOUT_MATCH_TOLERANCE_CM,
+          getLayoutOption(state.form.layout),
+          layoutOptions,
+        ),
+      },
+    });
+  }, [dispatch, state.form.width, state.form.height, state.form.layout]);
+
   const handleLayoutChange = useCallback(
     (layoutId: string) => {
       const layoutOption = getLayoutOption(layoutId);
@@ -200,6 +221,7 @@ export function useFormHandlers() {
     handleChange,
     handleNumericFieldBlur,
     handleThemeChange,
+    handleFlipOrientation,
     handleLayoutChange,
     handleColorChange,
     handleResetColor,

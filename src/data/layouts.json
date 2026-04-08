@@ -16,6 +16,16 @@
           "posterHeightCm": 42
         },
         {
+          "id": "print_a3_landscape",
+          "name": "A3 Landscape",
+          "description": "ISO A3 landscape format.",
+          "width": 42,
+          "height": 29.7,
+          "unit": "cm",
+          "posterWidthCm": 42,
+          "posterHeightCm": 29.7
+        },
+        {
           "id": "print_a4_portrait",
           "name": "A4 Portrait",
           "description": "Default print ratio based on A4 portrait.",
@@ -24,6 +34,16 @@
           "unit": "cm",
           "posterWidthCm": 21,
           "posterHeightCm": 29.7
+        },
+        {
+          "id": "print_a4_landscape",
+          "name": "A4 Landscape",
+          "description": "ISO A4 landscape format.",
+          "width": 29.7,
+          "height": 21,
+          "unit": "cm",
+          "posterWidthCm": 29.7,
+          "posterHeightCm": 21
         },
         {
           "id": "print_a5_portrait",
@@ -36,6 +56,16 @@
           "posterHeightCm": 21
         },
         {
+          "id": "print_a5_landscape",
+          "name": "A5 Landscape",
+          "description": "ISO A5 landscape format.",
+          "width": 21,
+          "height": 14.8,
+          "unit": "cm",
+          "posterWidthCm": 21,
+          "posterHeightCm": 14.8
+        },
+        {
           "id": "print_letter_us_portrait",
           "name": "Letter (US) Portrait",
           "description": "US Letter portrait format.",
@@ -44,6 +74,16 @@
           "unit": "cm",
           "posterWidthCm": 21.6,
           "posterHeightCm": 27.9
+        },
+        {
+          "id": "print_letter_us_landscape",
+          "name": "Letter (US) Landscape",
+          "description": "US Letter landscape format.",
+          "width": 27.9,
+          "height": 21.6,
+          "unit": "cm",
+          "posterWidthCm": 27.9,
+          "posterHeightCm": 21.6
         }
       ]
     },

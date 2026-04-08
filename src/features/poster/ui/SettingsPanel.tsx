@@ -62,6 +62,7 @@ export default function SettingsPanel({
     handleChange,
     handleNumericFieldBlur,
     handleThemeChange,
+    handleFlipOrientation,
     handleLayoutChange,
     handleColorChange,
     handleResetColor,
@@ -165,6 +166,7 @@ export default function SettingsPanel({
                 onNumericFieldBlur={handleNumericFieldBlur}
                 onThemeChange={handleThemeChange}
                 onLayoutChange={handleLayoutChange}
+                onFlipOrientation={handleFlipOrientation}
                 selectedTheme={selectedTheme}
                 themeOptions={themeOptions}
                 layoutGroups={layoutGroups}
@@ -202,6 +204,7 @@ export default function SettingsPanel({
                 onNumericFieldBlur={handleNumericFieldBlur}
                 onThemeChange={handleThemeChange}
                 onLayoutChange={handleLayoutChange}
+                onFlipOrientation={handleFlipOrientation}
                 selectedTheme={selectedTheme}
                 themeOptions={themeOptions}
                 layoutGroups={layoutGroups}

@@ -88,6 +88,7 @@ export const DEFAULT_FORM: PosterForm = {
   isochroneCenterLat: "",
   isochroneCenterLon: "",
   isochroneColor: "#0ea5e9",
+  isochroneShowLabels: false,
 };
 
 const INITIAL_STATE: PosterState = {

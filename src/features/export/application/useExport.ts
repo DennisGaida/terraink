@@ -60,7 +60,7 @@ export function useExport() {
     null,
   );
   const { form } = state;
-  const hasVisibleMarkers = form.showMarkers && state.markers.length > 0;
+  const hasVisibleMarkers = state.markers.length > 0;
   const hasIsochroneLabels =
     form.includeIsochrone && form.isochroneShowLabels && state.isochroneGeoJson != null;
 

@@ -29,6 +29,7 @@ const FORM_KEYS: Record<keyof PosterForm, string> = {
   includeRoadPath: "rpath",
   includeRoadMinorLow: "rminor",
   includeRoadOutline: "routline",
+  includeLandcover: "landcover",
   showMarkers: "mkshow",
   includeOsmAttribution: "osm",
   includeLandcover: "lcover",
@@ -56,6 +57,7 @@ const REVERSE_FORM_KEYS: Record<string, keyof PosterForm> = Object.fromEntries(
 const BOOL_FIELDS = new Set<keyof PosterForm>([
   "showPosterText",
   "includeCredits",
+  "includeLandcover",
   "includeBuildings",
   "includeWater",
   "includeParks",

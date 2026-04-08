@@ -335,6 +335,20 @@ export default function IsochroneSection() {
             </div>
           </div>
 
+          {/* Show labels */}
+          <div className="toggle-field isochrone-field" style={{ marginBottom: 8 }}>
+            <span className="isochrone-label">Show labels</span>
+            <label className="theme-switch">
+              <input
+                type="checkbox"
+                name="isochroneShowLabels"
+                checked={form.isochroneShowLabels}
+                onChange={(e) => setField("isochroneShowLabels", e.target.checked)}
+              />
+              <span className="theme-switch-track" aria-hidden="true" />
+            </label>
+          </div>
+
           {/* Custom center */}
           <div className="toggle-field isochrone-field" style={{ marginBottom: 8 }}>
             <span className="isochrone-label">Custom center</span>

@@ -60,6 +60,7 @@ export interface PosterForm {
   isochroneCenterLat: string;
   isochroneCenterLon: string;
   isochroneColor: string;
+  isochroneShowLabels: boolean;
 }
 
 /* ────── App-level state ────── */

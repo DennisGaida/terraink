@@ -9,6 +9,7 @@ import { usePosterContext } from "./PosterContext";
 import { useMapSync } from "@/features/map/application/useMapSync";
 import MapPreview from "@/features/map/ui/MapPreview";
 import MarkerOverlay from "@/features/markers/ui/MarkerOverlay";
+import IsochroneLabelOverlay from "@/features/isochrone/ui/IsochroneLabelOverlay";
 import GradientFades from "./GradientFades";
 import PosterTextOverlay from "./PosterTextOverlay";
 import SettingsInfo from "./SettingsInfo";
@@ -417,6 +418,15 @@ export default function PreviewPanel() {
           />
           {form.showMarkers ? (
             <GradientFades color={effectiveTheme.ui.bg} />
+          ) : null}
+          {form.includeIsochrone && form.isochroneShowLabels && state.isochroneGeoJson ? (
+            <IsochroneLabelOverlay
+              geoJson={state.isochroneGeoJson}
+              mapRef={mapRef}
+              fontFamily={form.fontFamily}
+              strokeOpacity={Number(form.isochroneStrokeOpacity)}
+              overzoomScale={overzoomScale}
+            />
           ) : null}
           {hasVisibleMarkers ? (
             <MarkerOverlay

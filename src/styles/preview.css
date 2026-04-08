@@ -97,6 +97,13 @@
   container-type: size;
 }
 
+.isochrone-label-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
 .poster-marker-overlay {
   position: absolute;
   inset: 0;

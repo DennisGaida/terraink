@@ -91,7 +91,7 @@ export const DEFAULT_FORM: PosterForm = {
   isochroneColor: "#0ea5e9",
 };
 
-const INITIAL_STATE: PosterState = {
+const BASE_INITIAL_STATE: PosterState = {
   form: DEFAULT_FORM,
   customColors: {},
   markers: [],
@@ -116,6 +116,29 @@ const INITIAL_STATE: PosterState = {
   },
 };
 
+function buildInitialState(): PosterState {
+  const parsed = parseUrlState();
+  if (!parsed) return BASE_INITIAL_STATE;
+  return {
+    ...BASE_INITIAL_STATE,
+    form: { ...DEFAULT_FORM, ...parsed.form },
+    customColors: parsed.customColors,
+    markers: parsed.markers,
+    markerDefaults: {
+      ...BASE_INITIAL_STATE.markerDefaults,
+      ...parsed.markerDefaults,
+    },
+    // Treat URL-provided display names as user overrides so reverse geocode
+    // on mount does not overwrite them with the nominatim result.
+    displayNameOverrides: {
+      city: "displayCity" in parsed.form,
+      country: "displayCountry" in parsed.form,
+    },
+  };
+}
+
+const INITIAL_STATE = buildInitialState();
+
 /* ────── Context shapes ────── */
 
 interface PosterDispatchContextValue {
@@ -138,17 +161,7 @@ const PosterContext = createContext<PosterContextValue | null>(null);
 /* ────── Provider ────── */
 
 export function PosterProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(posterReducer, undefined, () => {
-    const urlState = parseUrlState();
-    if (!urlState) return INITIAL_STATE;
-    return {
-      ...INITIAL_STATE,
-      form: { ...INITIAL_STATE.form, ...urlState.form },
-      customColors: urlState.customColors,
-      markers: urlState.markers,
-      markerDefaults: { ...INITIAL_STATE.markerDefaults, ...urlState.markerDefaults },
-    };
-  });
+  const [state, dispatch] = useReducer(posterReducer, INITIAL_STATE);
   const mapRef = useRef(null) as MapInstanceRef;
   const lastSyncedMarkerThemeColorRef = useRef<string | null>(null);
   const hasLoadedCustomIconsRef = useRef(false);

@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePosterContext } from "@/features/poster/ui/PosterContext";
+import ColorPicker from "@/features/theme/ui/ColorPicker";
+import { buildDynamicColorChoices } from "@/features/theme/domain/colorSuggestions";
+import { DISPLAY_PALETTE_KEYS, type ThemeColorKey } from "@/features/theme/domain/types";
+import { getThemeColorByPath } from "@/features/theme/domain/colorPaths";
 import {
   getHereApiKey,
   setHereApiKey,
@@ -14,9 +18,7 @@ const TRANSPORT_MODES: { value: IsochroneMode; label: string }[] = [
 ];
 
 const PRESET_RANGES: number[] = [15, 30, 45, 60, 90, 120, 180, 240];
-const PRESET_COLORS = [
-  "#0ea5e9", "#6366f1", "#f59e0b", "#10b981", "#ef4444", "#ec4899", "#8b5cf6",
-];
+const DEFAULT_ISOCHRONE_COLOR = "#0ea5e9";
 
 function ApiKeyModal({ onClose }: { onClose: () => void }) {
   const [value, setValue] = useState(getHereApiKey);
@@ -100,8 +102,18 @@ function ApiKeyModal({ onClose }: { onClose: () => void }) {
 }
 
 export default function IsochroneSection() {
-  const { state, dispatch } = usePosterContext();
+  const { state, dispatch, effectiveTheme } = usePosterContext();
   const { form, isochroneLoading, isochroneError } = state;
+
+  const colorPalette = useMemo(
+    () => DISPLAY_PALETTE_KEYS.map((key) => getThemeColorByPath(effectiveTheme, key as ThemeColorKey)).filter(Boolean),
+    [effectiveTheme],
+  );
+
+  const colorChoices = useMemo(
+    () => buildDynamicColorChoices(form.isochroneColor || DEFAULT_ISOCHRONE_COLOR, colorPalette),
+    [form.isochroneColor, colorPalette],
+  );
 
   const [rangeInput, setRangeInput] = useState("");
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -260,24 +272,17 @@ export default function IsochroneSection() {
                 title="Pick isochrone color"
                 aria-pressed={showColorPicker}
               />
-              {showColorPicker && (
-                <div className="isochrone-color-presets">
-                  {PRESET_COLORS.map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      className={`isochrone-color-preset${form.isochroneColor === c ? " is-active" : ""}`}
-                      style={{ backgroundColor: c }}
-                      onClick={() => {
-                        setField("isochroneColor", c);
-                        setShowColorPicker(false);
-                      }}
-                      aria-label={c}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
+            {showColorPicker && (
+              <ColorPicker
+                currentColor={form.isochroneColor}
+                suggestedColors={colorChoices.suggestedColors}
+                moreColors={colorChoices.moreColors}
+                onChange={(color) => setField("isochroneColor", color)}
+                onResetColor={() => setField("isochroneColor", DEFAULT_ISOCHRONE_COLOR)}
+                canResetColor={form.isochroneColor !== DEFAULT_ISOCHRONE_COLOR}
+              />
+            )}
           </div>
 
           {/* Opacity / width sliders */}
@@ -320,9 +325,9 @@ export default function IsochroneSection() {
             <div className="isochrone-slider-row">
               <input
                 type="range"
-                min="0.5"
+                min="1"
                 max="20"
-                step="0.5"
+                step="1"
                 value={form.isochroneStrokeWidth}
                 onChange={(e) => setField("isochroneStrokeWidth", e.target.value)}
               />

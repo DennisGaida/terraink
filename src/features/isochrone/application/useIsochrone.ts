@@ -101,7 +101,6 @@ export function useIsochrone(
         })
         .catch((err: unknown) => {
           if (err instanceof Error && err.name === "AbortError") return;
-          console.error("[isochrone] fetch error:", err);
           const message = err instanceof Error ? err.message : "Isochrone fetch failed";
           dispatch({ type: "SET_ISOCHRONE_DATA", geoJson: null, error: message });
         });

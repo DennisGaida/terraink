@@ -1,4 +1,5 @@
-import type { FeatureCollection, Feature, Geometry, Polygon, MultiPolygon } from "geojson";
+import { decode } from "@here/flexpolyline";
+import type { FeatureCollection, Feature, Polygon } from "geojson";
 import type { IsochroneRequest, IsochroneMode } from "../domain/types";
 
 const HERE_BASE = "https://isoline.router.hereapi.com/v8/isolines";
@@ -9,36 +10,42 @@ const TRANSPORT_MODE: Record<IsochroneMode, string> = {
   driving: "car",
 };
 
-interface HereArea {
-  geometry: Polygon | MultiPolygon;
+interface HerePolygon {
+  outer: string;
+  inner?: string[];
 }
 
 interface HereIsoline {
   range: { type: string; value: number };
-  areas: HereArea[];
+  polygons: HerePolygon[];
 }
 
 interface HereResponse {
   isolines: HereIsoline[];
 }
 
-function mergeAreas(areas: HereArea[]): Polygon | MultiPolygon | null {
-  if (areas.length === 0) return null;
-  if (areas.length === 1) return areas[0].geometry;
-
-  const coordinates: number[][][][][] = [];
-  for (const area of areas) {
-    const geom = area.geometry;
-    if (geom.type === "Polygon") {
-      coordinates.push([geom.coordinates]);
-    } else if (geom.type === "MultiPolygon") {
-      coordinates.push(...geom.coordinates.map((c) => [c]));
-    }
+/**
+ * Decode a HERE Flexible Polyline string into a GeoJSON ring ([lon, lat][] ).
+ * The decoder returns {lat, lng} tuples — we convert to GeoJSON [lon, lat].
+ */
+function decodeRing(encoded: string): number[][] {
+  const { polyline } = decode(encoded);
+  // Close the ring if needed
+  const ring = polyline.map(([lat, lng]) => [lng, lat]);
+  const first = ring[0];
+  const last = ring[ring.length - 1];
+  if (first && last && (first[0] !== last[0] || first[1] !== last[1])) {
+    ring.push([first[0], first[1]]);
   }
-  return {
-    type: "MultiPolygon",
-    coordinates: coordinates.map((c) => c[0]),
-  };
+  return ring;
+}
+
+function polygonFromHere(p: HerePolygon): Polygon {
+  const rings: number[][][] = [decodeRing(p.outer)];
+  for (const inner of p.inner ?? []) {
+    rings.push(decodeRing(inner));
+  }
+  return { type: "Polygon", coordinates: rings };
 }
 
 export async function fetchIsochrone(
@@ -47,14 +54,11 @@ export async function fetchIsochrone(
   signal?: AbortSignal,
 ): Promise<FeatureCollection> {
   const transportMode = TRANSPORT_MODE[request.mode];
-  // Sort ascending so HERE returns values in consistent order
   const sorted = [...request.contours].sort((a, b) => a.minutes - b.minutes);
   const rangeSeconds = sorted.map((c) => c.minutes * 60);
 
-  // Build query string manually. Brackets must be percent-encoded (%5B/%5D)
-  // so Firefox accepts the URL; HERE decodes them server-side. Commas in
-  // range[values] are left literal — HERE expects them unencoded.
-  // encodeURIComponent on origin encodes the comma, which HERE also decodes fine.
+  // Brackets must be percent-encoded so Firefox accepts the URL;
+  // HERE decodes %5B/%5D server-side.
   const qs = [
     `transportMode=${encodeURIComponent(transportMode)}`,
     `origin=${request.lat},${request.lon}`,
@@ -63,21 +67,14 @@ export async function fetchIsochrone(
     `apiKey=${encodeURIComponent(apiKey)}`,
   ].join("&");
 
-  const url = `${HERE_BASE}?${qs}`;
-  console.log("[isochrone] requesting:", url.replace(/apiKey=[^&]+/, "apiKey=REDACTED"));
-
-  const res = await fetch(url, { signal });
-
-  console.log("[isochrone] response status:", res.status);
+  const res = await fetch(`${HERE_BASE}?${qs}`, { signal });
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     throw new Error(`Isochrone request failed (${res.status}): ${text}`);
   }
 
-  const rawText = await res.text();
-  console.log("[isochrone] raw response:", rawText.slice(0, 500));
-  const data = JSON.parse(rawText) as HereResponse;
+  const data = (await res.json()) as HereResponse;
 
   if (!Array.isArray(data.isolines)) {
     throw new Error(`Unexpected HERE response: ${JSON.stringify(data).slice(0, 200)}`);
@@ -87,28 +84,21 @@ export async function fetchIsochrone(
     request.contours.map((c) => [c.minutes * 60, c.color]),
   );
 
-  // Reverse so the smallest isochrone (innermost) renders last = on top
+  // Render largest isochrone first so smaller ones appear on top
   const isolines = [...data.isolines].sort((a, b) => b.range.value - a.range.value);
 
-  const features: Feature<Geometry>[] = isolines
-    .map((isoline) => {
-      const geometry = mergeAreas(isoline.areas);
-      if (!geometry) return null;
-      const color =
-        colorBySeconds.get(isoline.range.value) ??
-        request.contours[0]?.color ??
-        "888888";
-      return {
-        type: "Feature" as const,
-        geometry,
-        properties: {
-          value: isoline.range.value,
-          fillColor: color,
-          color,
-        },
-      };
-    })
-    .filter((f) => f !== null) as Feature<Geometry>[];
+  const features: Feature[] = isolines.flatMap((isoline) => {
+    if (!Array.isArray(isoline.polygons) || isoline.polygons.length === 0) return [];
+    const color =
+      colorBySeconds.get(isoline.range.value) ??
+      request.contours[0]?.color ??
+      "#888888";
+    return isoline.polygons.map((p) => ({
+      type: "Feature" as const,
+      geometry: polygonFromHere(p),
+      properties: { value: isoline.range.value, fillColor: color, color },
+    }));
+  });
 
   return { type: "FeatureCollection", features };
 }

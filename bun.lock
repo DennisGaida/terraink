@@ -5,6 +5,7 @@
     "": {
       "name": "terraink",
       "dependencies": {
+        "@here/flexpolyline": "^0.1.0",
         "maplibre-gl": "^5.19.0",
         "react": "^18.3.1",
         "react-colorful": "^5.6.1",
@@ -91,6 +92,8 @@
     "@fontsource/raleway": ["@fontsource/raleway@5.2.8", "", {}, "sha512-OATNM+J4XniKQRlI1e67v3euOnCUiXwpqgMofomKc5JNYOq0JPE6E5uTXMnFaZejKN1Z7s05JrHpmYB7/tg1Fw=="],
 
     "@fontsource/source-sans-pro": ["@fontsource/source-sans-pro@5.2.5", "", {}, "sha512-ypendqc4pYUc+EgF7qqPY9iVYEz1t/Qr03VojKxG/2g3dnpHa1B6DOlDxWQjQXDj5QrG6inEqGT0g+edjALZyg=="],
+
+    "@here/flexpolyline": ["@here/flexpolyline@0.1.0", "", {}, "sha512-aiFWozFqTbeAG6S8AOH9QPF7UYjChE1ApV+0dK4kiWp+S2MIJXD/WzHZ9kwd8hDC8gHRAl/yVtJ50uVf26/ygQ=="],
 
     "@img/colour": ["@img/colour@1.1.0", "", {}, "sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ=="],
 

@@ -47,6 +47,7 @@ const FORM_KEYS: Record<keyof PosterForm, string> = {
   isochroneCenterLat: "isocenterlat",
   isochroneCenterLon: "isocenterlon",
   isochroneColor: "isocolor",
+  isochroneShowLabels: "isolabels",
 };
 
 const REVERSE_FORM_KEYS: Record<string, keyof PosterForm> = Object.fromEntries(
@@ -71,6 +72,7 @@ const BOOL_FIELDS = new Set<keyof PosterForm>([
   "includeLandcover",
   "includeIsochrone",
   "isochroneCustomCenter",
+  "isochroneShowLabels",
 ]);
 
 /* ---- public API ---- */

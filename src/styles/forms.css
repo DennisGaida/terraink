@@ -429,7 +429,8 @@ button.font-scale-btn.is-active {
 
 /* ── Credits removal confirmation modal ── */
 
-.credits-confirm-modal {
+.support-modal {
+  position: relative;
   width: min(420px, 100%);
   max-height: unset;
   border-radius: 14px;
@@ -438,17 +439,45 @@ button.font-scale-btn.is-active {
   border: 1px solid rgba(94, 174, 212, 0.08);
 }
 
-.credits-modal__body {
+.support-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(151, 183, 207, 0.42);
+  border-radius: 999px;
+  background: var(--item-bg);
+  color: #d8e8f4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.support-modal__close svg {
+  width: 14px;
+  height: 14px;
+}
+
+.support-modal__close:hover,
+.support-modal__close:focus-visible {
+  transform: none;
+  filter: none;
+  background: rgba(47, 79, 102, 0.95);
+}
+
+.support-modal__body {
   padding: 18px 18px 16px;
   display: grid;
   gap: 14px;
-  /* softened warm accent: make the orange a very faint glow; match app gradient direction */
   background: linear-gradient(180deg, rgba(255, 131, 114, 0.07), #0a1824);
   -webkit-background-clip: padding-box;
   background-clip: padding-box;
 }
 
-.credits-modal__headline {
+.support-modal__headline {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 700;
@@ -457,19 +486,19 @@ button.font-scale-btn.is-active {
   letter-spacing: -0.01em;
 }
 
-.credits-modal__text {
+.support-modal__text {
   margin: 0;
   font-size: 1rem;
   line-height: 1.6;
   color: #b8cedd;
 }
 
-.credits-modal__text strong {
+.support-modal__text strong {
   color: #e4f2fc;
   font-weight: 700;
 }
 
-.credits-modal__actions {
+.support-modal__actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -478,8 +507,10 @@ button.font-scale-btn.is-active {
   margin-top: 6px;
 }
 
-.credits-modal__keep {
+.support-modal__kofi {
+  display: inline-flex;
   align-items: center;
+  gap: 6px;
   padding: 10px 20px;
   border-radius: 999px;
   border: 1px solid rgba(94, 174, 212, 0.55);
@@ -503,8 +534,8 @@ button.font-scale-btn.is-active {
     color 0.15s ease;
 }
 
-.credits-modal__keep:hover,
-.credits-modal__keep:focus-visible {
+.support-modal__kofi:hover,
+.support-modal__kofi:focus-visible {
   transform: none;
   filter: none;
   border-color: rgba(130, 200, 240, 0.85);
@@ -519,7 +550,55 @@ button.font-scale-btn.is-active {
   color: #f0faff;
 }
 
-.credits-modal__remove {
+.support-modal__instagram {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 120, 180, 0.45);
+  background: linear-gradient(
+    135deg,
+    rgba(140, 58, 110, 0.95) 0%,
+    rgba(100, 40, 80, 0.95) 100%
+  );
+  color: #f4dff0;
+  text-decoration: none;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow:
+    0 0 14px rgba(200, 120, 180, 0.22),
+    0 2px 6px rgba(0, 0, 0, 0.35);
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    color 0.15s ease;
+}
+
+.support-modal__instagram svg {
+  width: 16px;
+  height: 16px;
+}
+
+.support-modal__instagram:hover,
+.support-modal__instagram:focus-visible {
+  transform: none;
+  filter: none;
+  border-color: rgba(220, 150, 200, 0.75);
+  background: linear-gradient(
+    135deg,
+    rgba(160, 70, 128, 0.98) 0%,
+    rgba(120, 50, 95, 0.98) 100%
+  );
+  box-shadow:
+    0 0 22px rgba(200, 120, 180, 0.38),
+    0 2px 8px rgba(0, 0, 0, 0.4);
+  color: #fff0fb;
+}
+
+.support-modal__dismiss {
   padding: 6px 4px;
   border-radius: 4px;
   border: none;
@@ -531,8 +610,8 @@ button.font-scale-btn.is-active {
   transition: color 0.15s ease;
 }
 
-.credits-modal__remove:hover,
-.credits-modal__remove:focus-visible {
+.support-modal__dismiss:hover,
+.support-modal__dismiss:focus-visible {
   transform: none;
   filter: none;
   color: #7ea5bc;

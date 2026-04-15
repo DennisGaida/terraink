@@ -8,6 +8,10 @@
 - [ ] I have read the [contributing guidelines](./CONTRIBUTING.md)
 - [ ] This branch was created from `dev` and this PR targets `dev`
 
+## CLA
+
+- [ ] I have read and agree to the [Contributor License Agreement](./CLA.md)
+
 ## Implementation
 
 - [ ] The implementation matches the requested behavior and UX

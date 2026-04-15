@@ -12,14 +12,18 @@ import MobileNavBar, { type MobileTab } from "@/shared/ui/MobileNavBar";
 import InstallPrompt from "@/features/install/ui/InstallPrompt";
 import { useSwipeDown } from "@/shared/hooks/useSwipeDown";
 import { CheckIcon } from "@/shared/ui/Icons";
+import SupportModal from "@/features/export/ui/SupportModal";
+import {
+  SUPPORT_PROMPT_EVENT,
+  type SupportPromptState,
+} from "@/features/export/application/useExport";
 
 const AboutModal = lazy(() => import("@/shared/ui/AboutModal"));
 const SettingsPanel = lazy(() => import("@/features/poster/ui/SettingsPanel"));
 const AnnouncementModal = lazy(
   () => import("@/features/updates/ui/AnnouncementModal"),
 );
-const DesktopExportFab = lazy(() => import("@/features/export/ui/DesktopExportFab"));
-const MobileExportFab = lazy(() => import("@/features/export/ui/MobileExportFab"));
+const ExportFab = lazy(() => import("@/features/export/ui/ExportFab"));
 const DesktopLocationBar = lazy(() => import("@/shared/ui/DesktopLocationBar"));
 
 function SettingsDrawer({
@@ -81,12 +85,21 @@ export default function AppShell() {
   const [desktopLocationRowVisible, setDesktopLocationRowVisible] =
     useState(true);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [supportPrompt, setSupportPrompt] = useState<SupportPromptState | null>(null);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      setSupportPrompt((e as CustomEvent<SupportPromptState>).detail);
+    };
+    window.addEventListener(SUPPORT_PROMPT_EVENT, handler);
+    return () => window.removeEventListener(SUPPORT_PROMPT_EVENT, handler);
+  }, []);
+
   useEffect(() => {
     const preload = () => {
       void import("@/features/poster/ui/SettingsPanel");
       void import("@/shared/ui/DesktopLocationBar");
-      void import("@/features/export/ui/DesktopExportFab");
-      void import("@/features/export/ui/MobileExportFab");
+      void import("@/features/export/ui/ExportFab");
       void import("@/features/updates/ui/AnnouncementModal");
     };
 
@@ -278,7 +291,7 @@ export default function AppShell() {
         onTabChange={handleMobileTabChange}
       />
       <Suspense fallback={null}>
-        {isMobileViewport ? <MobileExportFab /> : <DesktopExportFab />}
+        <ExportFab isMobile={isMobileViewport} />
       </Suspense>
 
       <FooterNote />
@@ -289,6 +302,13 @@ export default function AppShell() {
         <Suspense fallback={null}>
           <AboutModal onClose={() => setAboutOpen(false)} />
         </Suspense>
+      ) : null}
+      {supportPrompt ? (
+        <SupportModal
+          posterNumber={supportPrompt.posterNumber}
+          variant={supportPrompt.variant}
+          onClose={() => setSupportPrompt(null)}
+        />
       ) : null}
     </div>
   );

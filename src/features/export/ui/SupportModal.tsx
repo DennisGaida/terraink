@@ -1,18 +1,23 @@
-﻿import { createPortal } from "react-dom";
-import { KOFI_URL } from "@/core/config";
+import { createPortal } from "react-dom";
+import { KOFI_URL, SOCIAL_INSTAGRAM } from "@/core/config";
+import { CloseIcon, InstagramIcon } from "@/shared/ui/Icons";
+import type { SupportPromptVariant } from "@/features/export/application/useExport";
 
 interface SupportModalProps {
   posterNumber: number;
+  variant: SupportPromptVariant;
   onClose: () => void;
   titleId?: string;
 }
 
 export default function SupportModal({
   posterNumber,
+  variant,
   onClose,
   titleId = "export-support-modal-title",
 }: SupportModalProps) {
   const kofiUrl = String(KOFI_URL ?? "").trim();
+  const instagramUrl = String(SOCIAL_INSTAGRAM ?? "").trim();
 
   return createPortal(
     <div
@@ -21,41 +26,85 @@ export default function SupportModal({
       onClick={onClose}
     >
       <div
-        className="picker-modal credits-confirm-modal"
+        className="picker-modal support-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="credits-modal__body">
-          <p className="credits-modal__headline" id={titleId}>
-            ✨ Your poster is ready!
-          </p>
-          <p className="credits-modal__text">
-            If Terraink helped you create this poster, consider supporting the project on Ko-fi.
-          </p>
-          <p className="credits-modal__text">
-            This was your poster <strong>#{posterNumber}</strong> 🎉
-          </p>
-          <div className="credits-modal__actions">
-            {kofiUrl ? (
-              <a
-                className="credits-modal__keep"
-                href={kofiUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span className="heart">❤︎</span> Support on Ko-fi
-              </a>
-            ) : null}
-            <button
-              type="button"
-              className="credits-modal__remove"
-              onClick={onClose}
-            >
-              {kofiUrl ? "Maybe later" : "Close"}
-            </button>
-          </div>
+        <button
+          type="button"
+          className="support-modal__close"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          <CloseIcon />
+        </button>
+        <div className="support-modal__body">
+          {variant === "first" ? (
+            <>
+              <p className="support-modal__headline" id={titleId}>
+                🎉 Your first poster!
+              </p>
+              <p className="support-modal__text">
+                Love your poster? Support us on Instagram for inspiration and updates.
+              </p>
+              <div className="support-modal__actions">
+                {instagramUrl ? (
+                  <a
+                    className="support-modal__instagram"
+                    href={instagramUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <InstagramIcon /> Follow us
+                  </a>
+                ) : null}
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="support-modal__headline" id={titleId}>
+                ✨ Your poster is ready!
+              </p>
+              <p className="support-modal__text">
+                If Terraink helped you create this poster, consider supporting the project.
+              </p>
+              <p className="support-modal__text">
+                This was your poster <strong>#{posterNumber}</strong> 🎉
+              </p>
+              <div className="support-modal__actions">
+                {kofiUrl ? (
+                  <a
+                    className="support-modal__kofi"
+                    href={kofiUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <span className="heart">❤︎</span> Support on Ko-fi
+                  </a>
+                ) : null}
+                {instagramUrl ? (
+                  <a
+                    className="support-modal__instagram"
+                    href={instagramUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <InstagramIcon /> Follow us
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    className="support-modal__dismiss"
+                    onClick={onClose}
+                  >
+                    Close
+                  </button>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>,

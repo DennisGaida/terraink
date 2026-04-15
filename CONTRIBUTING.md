@@ -1,4 +1,4 @@
-# Contributing to TerraInk
+# Contributing to Terraink
 
 Thanks for your interest in contributing. This guide explains the required workflow and the engineering standards used in this repository.
 
@@ -144,4 +144,10 @@ AI-assisted coding is allowed. Vibe-coded submissions are not.
 
 ## Contributor License Agreement (CLA)
 
-This project does not currently require a Contributor License Agreement (CLA). By submitting a pull request, you agree that your contribution is licensed under the same MIT License as the project. The project owner reserves the right to relicense or redistribute the project and its derivatives in the future, while preserving contributor attribution.
+This project requires a Contributor License Agreement for code contributions (pull requests, patches, and commits). By submitting a pull request, you agree to the terms in [`CLA.md`](./CLA.md). Opening issues or discussions does not require signing the CLA.
+
+In summary: you retain copyright over your work, but you grant the project maintainer a perpetual, irrevocable, non-exclusive license to use, sublicense, and relicense your contributions — including under commercial or proprietary terms. This is necessary because the project uses a dual-licensing model.
+
+The project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**. See [`LICENSE`](./LICENSE) for the full text.
+
+You sign the CLA by checking the checkbox in the pull request template. Questions can be asked in issues or discussions without signing.

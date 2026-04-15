@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { usePosterContext } from "@/features/poster/ui/PosterContext";
 import { localStorageCache } from "@/core/cache/localStorageCache";
 import type { ExportFormat } from "@/features/export/domain/types";
@@ -22,9 +22,14 @@ import {
 
 const EXPORT_COUNT_STORAGE_KEY = "terraink.poster.count";
 
+export type SupportPromptVariant = "first" | "milestone";
+
 export interface SupportPromptState {
   posterNumber: number;
+  variant: SupportPromptVariant;
 }
+
+export const SUPPORT_PROMPT_EVENT = "terraink:support-prompt";
 
 // Use a 1-year TTL so the export count persists across sessions.
 const EXPORT_COUNT_TTL_MS = 365 * 24 * 60 * 60 * 1000;
@@ -56,9 +61,6 @@ function writePosterExportCount(nextCount: number): void {
  */
 export function useExport() {
   const { state, dispatch, effectiveTheme, mapRef } = usePosterContext();
-  const [supportPrompt, setSupportPrompt] = useState<SupportPromptState | null>(
-    null,
-  );
   const { form } = state;
   const hasVisibleMarkers = state.markers.length > 0;
   const hasIsochroneLabels =
@@ -68,13 +70,17 @@ export function useExport() {
     const nextCount = readPosterExportCount() + 1;
     writePosterExportCount(nextCount);
 
-    if (nextCount % 5 === 0) {
-      setSupportPrompt({ posterNumber: nextCount });
-    }
-  }, []);
+    let variant: SupportPromptVariant | null = null;
+    if (nextCount === 1) variant = "first";
+    else if (nextCount % 5 === 0) variant = "milestone";
 
-  const dismissSupportPrompt = useCallback(() => {
-    setSupportPrompt(null);
+    if (variant) {
+      window.dispatchEvent(
+        new CustomEvent(SUPPORT_PROMPT_EVENT, {
+          detail: { posterNumber: nextCount, variant },
+        }),
+      );
+    }
   }, []);
 
   const exportPoster = useCallback(
@@ -240,10 +246,9 @@ export function useExport() {
 
   return {
     isExporting: state.isExporting,
+    exportPoster,
     handleDownloadPng,
     handleDownloadPdf,
     handleDownloadSvg,
-    supportPrompt,
-    dismissSupportPrompt,
   };
 }

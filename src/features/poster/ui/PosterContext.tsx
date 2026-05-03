@@ -25,6 +25,10 @@ import {
   loadCustomMarkerIcons,
   saveCustomMarkerIcons,
 } from "@/features/markers/infrastructure/customIconStorage";
+import {
+  loadSavedThemes,
+  saveSavedThemes,
+} from "@/features/theme/infrastructure/savedThemesStorage";
 
 /* ────── Default form (moved from appConfig) ────── */
 
@@ -82,6 +86,7 @@ export const DEFAULT_FORM: PosterForm = {
 const INITIAL_STATE: PosterState = {
   form: DEFAULT_FORM,
   customColors: {},
+  savedThemes: [],
   markers: [],
   customMarkerIcons: [],
   markerDefaults: {
@@ -127,14 +132,26 @@ export function PosterProvider({ children }: { children: ReactNode }) {
   const mapRef = useRef(null) as MapInstanceRef;
   const lastSyncedMarkerThemeColorRef = useRef<string | null>(null);
   const hasLoadedCustomIconsRef = useRef(false);
+  const hasLoadedSavedThemesRef = useRef(false);
 
   // Set initial position from browser geolocation (or Hanover fallback)
   useGeolocation(dispatch);
 
-  const selectedTheme = useMemo(
-    () => getTheme(state.form.theme),
-    [state.form.theme],
-  );
+  const selectedTheme = useMemo(() => {
+    const saved = state.savedThemes.find((t) => t.id === state.form.theme);
+    if (saved) {
+      return {
+        name: saved.name,
+        description: "Saved theme",
+        ui: { ...saved.colors.ui },
+        map: {
+          ...saved.colors.map,
+          roads: { ...saved.colors.map.roads },
+        },
+      };
+    }
+    return getTheme(state.form.theme);
+  }, [state.form.theme, state.savedThemes]);
 
   const effectiveTheme = useMemo(() => {
     if (Object.keys(state.customColors).length === 0) {
@@ -188,6 +205,19 @@ export function PosterProvider({ children }: { children: ReactNode }) {
       // Ignore storage write failures.
     });
   }, [state.customMarkerIcons]);
+
+  useEffect(() => {
+    const saved = loadSavedThemes();
+    hasLoadedSavedThemesRef.current = true;
+    if (saved.length > 0) {
+      dispatch({ type: "SET_SAVED_THEMES", themes: saved });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedSavedThemesRef.current) return;
+    saveSavedThemes(state.savedThemes);
+  }, [state.savedThemes]);
 
   const mapStyle = useMemo(
     () =>

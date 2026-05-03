@@ -56,7 +56,8 @@ export default function SettingsPanel({
 }: {
   mobileTab?: MobileTab;
 }) {
-  const { state, dispatch, mapRef, selectedTheme } = usePosterContext();
+  const { state, dispatch, mapRef, selectedTheme, effectiveTheme } =
+    usePosterContext();
   const {
     handleChange,
     handleNumericFieldBlur,
@@ -64,6 +65,10 @@ export default function SettingsPanel({
     handleLayoutChange,
     handleColorChange,
     handleResetColors,
+    handleSetCustomColors,
+    handleAddSavedTheme,
+    handleUpdateSavedTheme,
+    handleRemoveSavedTheme,
     handleLocationSelect,
     handleClearLocation,
     setLocationFocused,
@@ -171,6 +176,12 @@ export default function SettingsPanel({
                 onColorChange={handleColorChange}
                 onResetColors={handleResetColors}
                 onColorEditorActiveChange={setIsColorEditorActive}
+                effectiveTheme={effectiveTheme}
+                savedThemes={state.savedThemes}
+                onAddSavedTheme={handleAddSavedTheme}
+                onUpdateSavedTheme={handleUpdateSavedTheme}
+                onRemoveSavedTheme={handleRemoveSavedTheme}
+                onSetCustomColors={handleSetCustomColors}
               />
             ) : null}
           </div>
@@ -208,6 +219,12 @@ export default function SettingsPanel({
                 onColorChange={handleColorChange}
                 onResetColors={handleResetColors}
                 onColorEditorActiveChange={setIsColorEditorActive}
+                effectiveTheme={effectiveTheme}
+                savedThemes={state.savedThemes}
+                onAddSavedTheme={handleAddSavedTheme}
+                onUpdateSavedTheme={handleUpdateSavedTheme}
+                onRemoveSavedTheme={handleRemoveSavedTheme}
+                onSetCustomColors={handleSetCustomColors}
               />
             ) : null}
           </div>

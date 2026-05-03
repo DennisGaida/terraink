@@ -11,6 +11,7 @@ import {
 import { createDefaultMarkerSettings } from "@/features/markers/infrastructure/helpers";
 import { featuredMarkerIcons } from "@/features/markers/infrastructure/iconRegistry";
 import { clamp } from "@/shared/geo/math";
+import type { SavedTheme } from "@/features/theme/domain/types";
 
 /* ────── Form state ────── */
 
@@ -47,6 +48,7 @@ export interface PosterForm {
 export interface PosterState {
   form: PosterForm;
   customColors: Record<string, string>;
+  savedThemes: SavedTheme[];
   markers: MarkerItem[];
   customMarkerIcons: MarkerIconDefinition[];
   markerDefaults: MarkerDefaults;
@@ -75,7 +77,12 @@ export type PosterAction =
   | { type: "SET_THEME"; themeId: string }
   | { type: "SET_LAYOUT"; layoutId: string; widthCm: string; heightCm: string }
   | { type: "SET_COLOR"; key: string; value: string }
+  | { type: "SET_CUSTOM_COLORS"; colors: Record<string, string> }
   | { type: "RESET_COLORS" }
+  | { type: "SET_SAVED_THEMES"; themes: SavedTheme[] }
+  | { type: "ADD_SAVED_THEME"; theme: SavedTheme }
+  | { type: "UPDATE_SAVED_THEME"; themeId: string; changes: Partial<SavedTheme> }
+  | { type: "REMOVE_SAVED_THEME"; themeId: string }
   | { type: "SELECT_LOCATION"; location: SearchResult }
   | { type: "SET_USER_LOCATION"; location: SearchResult | null }
   | { type: "CLEAR_LOCATION" }
@@ -172,8 +179,36 @@ export function posterReducer(
         customColors: { ...state.customColors, [action.key]: action.value },
       };
 
+    case "SET_CUSTOM_COLORS":
+      return { ...state, customColors: { ...action.colors } };
+
     case "RESET_COLORS":
       return { ...state, customColors: {} };
+
+    case "SET_SAVED_THEMES":
+      return { ...state, savedThemes: action.themes };
+
+    case "ADD_SAVED_THEME":
+      return { ...state, savedThemes: [...state.savedThemes, action.theme] };
+
+    case "UPDATE_SAVED_THEME":
+      return {
+        ...state,
+        savedThemes: state.savedThemes.map((t) =>
+          t.id === action.themeId
+            ? { ...t, ...action.changes, id: t.id }
+            : t,
+        ),
+      };
+
+    case "REMOVE_SAVED_THEME": {
+      const nextSaved = state.savedThemes.filter(
+        (t) => t.id !== action.themeId,
+      );
+      // If user is currently on the deleted saved theme, reducer leaves
+      // form.theme alone — caller decides whether to switch themes.
+      return { ...state, savedThemes: nextSaved };
+    }
 
     case "SELECT_LOCATION":
       return {

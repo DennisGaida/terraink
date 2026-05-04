@@ -14,7 +14,8 @@ export type MobileTab =
   | "layout"
   | "style"
   | "layers"
-  | "markers";
+  | "markers"
+  | "settings";
 
 const tabs: {
   id: MobileTab;
@@ -73,9 +74,12 @@ export default function MobileNavBar({
 
       <button
         type="button"
-        className="mobile-nav-settings"
+        className={`mobile-nav-settings${
+          drawerOpen && activeTab === "settings" ? " is-active" : ""
+        }`}
         aria-label="Settings"
-        disabled
+        aria-pressed={drawerOpen && activeTab === "settings"}
+        onClick={() => onTabChange("settings")}
       >
         <SettingsIcon className="mobile-nav-settings-icon" />
       </button>

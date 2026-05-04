@@ -25,6 +25,11 @@ import {
   loadCustomMarkerIcons,
   saveCustomMarkerIcons,
 } from "@/features/markers/infrastructure/customIconStorage";
+import {
+  loadUserDefaults,
+  saveUserDefaults,
+} from "@/features/settings/infrastructure/userDefaultsStorage";
+import type { UserDefaults } from "@/features/settings/domain/types";
 
 /* ────── Default form (moved from appConfig) ────── */
 
@@ -32,6 +37,7 @@ import {
   defaultLayoutId,
   getLayoutOption,
 } from "@/features/layout/infrastructure/layoutRepository";
+import { formatLayoutCm } from "@/features/layout/domain/layoutMatcher";
 import { defaultThemeName } from "@/features/theme/infrastructure/themeRepository";
 import {
   DEFAULT_POSTER_WIDTH_CM,
@@ -79,27 +85,49 @@ export const DEFAULT_FORM: PosterForm = {
   showMarkers: true,
 };
 
-const INITIAL_STATE: PosterState = {
-  form: DEFAULT_FORM,
-  customColors: {},
-  markers: [],
-  customMarkerIcons: [],
-  markerDefaults: {
-    ...createDefaultMarkerSettings(),
-    color: getTheme(defaultThemeName).ui.text,
-  },
-  isMarkerEditorActive: false,
-  activeMarkerId: null,
-  error: "",
-  isExporting: false,
-  isLocationFocused: false,
-  selectedLocation: null,
-  userLocation: null,
-  displayNameOverrides: {
-    city: false,
-    country: false,
-  },
-};
+function applyUserDefaultsToForm(
+  baseForm: PosterForm,
+  defaults: UserDefaults,
+): PosterForm {
+  const next: PosterForm = { ...baseForm };
+  if (defaults.theme) next.theme = defaults.theme;
+  if (defaults.layout) {
+    next.layout = defaults.layout;
+    const layoutOption = getLayoutOption(defaults.layout);
+    if (layoutOption) {
+      next.width = formatLayoutCm(layoutOption.widthCm);
+      next.height = formatLayoutCm(layoutOption.heightCm);
+    }
+  }
+  if (defaults.fontFamily !== undefined) next.fontFamily = defaults.fontFamily;
+  return next;
+}
+
+function buildInitialState(): PosterState {
+  const userDefaults = loadUserDefaults();
+  return {
+    form: applyUserDefaultsToForm(DEFAULT_FORM, userDefaults),
+    customColors: {},
+    userDefaults,
+    markers: [],
+    customMarkerIcons: [],
+    markerDefaults: {
+      ...createDefaultMarkerSettings(),
+      color: getTheme(defaultThemeName).ui.text,
+    },
+    isMarkerEditorActive: false,
+    activeMarkerId: null,
+    error: "",
+    isExporting: false,
+    isLocationFocused: false,
+    selectedLocation: null,
+    userLocation: null,
+    displayNameOverrides: {
+      city: false,
+      country: false,
+    },
+  };
+}
 
 /* ────── Context shapes ────── */
 
@@ -123,12 +151,16 @@ const PosterContext = createContext<PosterContextValue | null>(null);
 /* ────── Provider ────── */
 
 export function PosterProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(posterReducer, INITIAL_STATE);
+  const [state, dispatch] = useReducer(
+    posterReducer,
+    undefined,
+    buildInitialState,
+  );
   const mapRef = useRef(null) as MapInstanceRef;
   const lastSyncedMarkerThemeColorRef = useRef<string | null>(null);
   const hasLoadedCustomIconsRef = useRef(false);
+  const initialUserDefaultsRef = useRef(state.userDefaults);
 
-  // Set initial position from browser geolocation (or Hanover fallback)
   useGeolocation(dispatch);
 
   const selectedTheme = useMemo(
@@ -188,6 +220,13 @@ export function PosterProvider({ children }: { children: ReactNode }) {
       // Ignore storage write failures.
     });
   }, [state.customMarkerIcons]);
+
+
+  useEffect(() => {
+    if (state.userDefaults === initialUserDefaultsRef.current) return;
+    saveUserDefaults(state.userDefaults);
+  }, [state.userDefaults]);
+
 
   const mapStyle = useMemo(
     () =>

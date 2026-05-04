@@ -11,6 +11,7 @@ import {
 import { createDefaultMarkerSettings } from "@/features/markers/infrastructure/helpers";
 import { featuredMarkerIcons } from "@/features/markers/infrastructure/iconRegistry";
 import { clamp } from "@/shared/geo/math";
+import type { UserDefaults } from "@/features/settings/domain/types";
 
 /* ────── Form state ────── */
 
@@ -47,6 +48,7 @@ export interface PosterForm {
 export interface PosterState {
   form: PosterForm;
   customColors: Record<string, string>;
+  userDefaults: UserDefaults;
   markers: MarkerItem[];
   customMarkerIcons: MarkerIconDefinition[];
   markerDefaults: MarkerDefaults;
@@ -76,6 +78,8 @@ export type PosterAction =
   | { type: "SET_LAYOUT"; layoutId: string; widthCm: string; heightCm: string }
   | { type: "SET_COLOR"; key: string; value: string }
   | { type: "RESET_COLORS" }
+  | { type: "SET_USER_DEFAULTS"; defaults: UserDefaults }
+  | { type: "RESET_USER_DEFAULTS" }
   | { type: "SELECT_LOCATION"; location: SearchResult }
   | { type: "SET_USER_LOCATION"; location: SearchResult | null }
   | { type: "CLEAR_LOCATION" }
@@ -174,6 +178,13 @@ export function posterReducer(
 
     case "RESET_COLORS":
       return { ...state, customColors: {} };
+
+    case "SET_USER_DEFAULTS":
+      return { ...state, userDefaults: action.defaults };
+
+    case "RESET_USER_DEFAULTS":
+      return { ...state, userDefaults: {} };
+
 
     case "SELECT_LOCATION":
       return {

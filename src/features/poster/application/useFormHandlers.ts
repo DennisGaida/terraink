@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { usePosterContext } from "../ui/PosterContext";
+import type { UserDefaults } from "@/features/settings/domain/types";
 import { clamp } from "@/shared/geo/math";
 import {
   normalizePosterSizeValue,
@@ -150,6 +151,26 @@ export function useFormHandlers() {
     dispatch({ type: "RESET_COLORS" });
   }, [dispatch]);
 
+
+  const handleSaveCurrentAsDefaults = useCallback(() => {
+    const defaults: UserDefaults = {
+      theme: state.form.theme,
+      layout: state.form.layout,
+      fontFamily: state.form.fontFamily,
+    };
+    dispatch({ type: "SET_USER_DEFAULTS", defaults });
+  }, [
+    dispatch,
+    state.form.fontFamily,
+    state.form.layout,
+    state.form.theme,
+  ]);
+
+  const handleResetUserDefaults = useCallback(() => {
+    dispatch({ type: "RESET_USER_DEFAULTS" });
+  }, [dispatch]);
+
+
   const handleLocationSelect = useCallback(
     (suggestion: {
       label: string;
@@ -189,6 +210,8 @@ export function useFormHandlers() {
     handleLayoutChange,
     handleColorChange,
     handleResetColors,
+    handleSaveCurrentAsDefaults,
+    handleResetUserDefaults,
     handleLocationSelect,
     handleClearLocation,
     setLocationFocused,

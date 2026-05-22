@@ -3419,6 +3419,8 @@ button.location-clear-btn:focus-visible {
 .font-picker-option.is-selected {
   color: #dff3ff;
   background: rgba(94, 174, 212, 0.18);
+}
+
 /* ── Routes ── */
 
 .poster-route-overlay {
@@ -3948,7 +3950,7 @@ button.route-card__endpoint-option.is-selected {
   margin: 0;
   text-align: center;
   padding: 8px 0;
-
+}
 
 /* ── Saved themes ── */
 
@@ -4080,6 +4082,11 @@ button.theme-card-delete:focus-visible {
 }
 
 .save-theme-hint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #8fa8b9;
+  line-height: 1.4;
+}
 
 /* ── Settings panel ── */
 
@@ -4146,6 +4153,11 @@ button.save-theme-confirm {
 
 button.save-theme-confirm:not(:disabled):hover,
 button.save-theme-confirm:focus-visible {
+  transform: none;
+  filter: none;
+  border-color: rgba(143, 215, 175, 0.95);
+  background: rgba(40, 88, 68, 1);
+}
 
 .settings-defaults-list {
   display: flex;
@@ -4318,6 +4330,7 @@ button.confirm-modal-destructive:focus-visible {
   filter: none;
   border-color: rgba(255, 138, 110, 0.95);
   background: rgba(126, 42, 28, 1);
+}
 
 button.settings-reset-btn {
   width: auto;

@@ -75,6 +75,10 @@ export default function SettingsPanel({
     handleColorChange,
     handleResetColor,
     handleResetColors,
+    handleSetCustomColors,
+    handleAddSavedTheme,
+    handleUpdateSavedTheme,
+    handleRemoveSavedTheme,
     handleLocationSelect,
     handleClearLocation,
     setLocationFocused,
@@ -184,6 +188,12 @@ export default function SettingsPanel({
                 onColorChange={handleColorChange}
                 onResetColors={handleResetColors}
                 onColorEditorActiveChange={setIsColorEditorActive}
+                effectiveTheme={effectiveTheme}
+                savedThemes={state.savedThemes}
+                onAddSavedTheme={handleAddSavedTheme}
+                onUpdateSavedTheme={handleUpdateSavedTheme}
+                onRemoveSavedTheme={handleRemoveSavedTheme}
+                onSetCustomColors={handleSetCustomColors}
               />
             ) : null}
           </div>
@@ -222,6 +232,12 @@ export default function SettingsPanel({
                 onColorChange={handleColorChange}
                 onResetColors={handleResetColors}
                 onColorEditorActiveChange={setIsColorEditorActive}
+                effectiveTheme={effectiveTheme}
+                savedThemes={state.savedThemes}
+                onAddSavedTheme={handleAddSavedTheme}
+                onUpdateSavedTheme={handleUpdateSavedTheme}
+                onRemoveSavedTheme={handleRemoveSavedTheme}
+                onSetCustomColors={handleSetCustomColors}
               />
             ) : null}
           </div>

@@ -41,6 +41,8 @@ export { createPosterFilename } from "@/features/export/infrastructure/filenameG
 
 export { triggerDownloadBlob } from "@/features/export/infrastructure/fileDownloader";
 
+export { copyCanvasToClipboard } from "@/features/export/infrastructure/clipboardExporter";
+
 /* ── Isochrone ── */
 
 export { fetchIsochrone } from "@/features/isochrone/infrastructure/hereAdapter";

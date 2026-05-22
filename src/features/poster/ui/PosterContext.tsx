@@ -89,6 +89,7 @@ export const DEFAULT_FORM: PosterForm = {
   includeSkiResorts: false,
   includeCycleWays: false,
   showMarkers: true,
+  bearing: "0",
   includeOsmAttribution: true,
   includeIsochrone: false,
   isochroneMode: "walking",

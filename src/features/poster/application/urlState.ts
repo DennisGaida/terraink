@@ -48,6 +48,7 @@ const FORM_KEYS: Record<keyof PosterForm, string> = {
   isochroneCenterLon: "isocenterlon",
   isochroneColor: "isocolor",
   isochroneShowLabels: "isolabels",
+  bearing: "bearing",
   includeSkiResorts: "ski",
   includeCycleWays: "cycle",
   showRoutes: "rtshow",

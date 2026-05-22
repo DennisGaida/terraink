@@ -13,6 +13,7 @@ import IsochroneSection from "@/features/isochrone/ui/IsochroneSection";
 import MarkersSection from "@/features/markers/ui/MarkersSection";
 import RoutesSection from "@/features/routes/ui/RoutesSection";
 import TypographySection from "@/features/poster/ui/TypographySection";
+import PresetsSection from "@/features/presets/ui/PresetsSection";
 import {
   LocationIcon,
   ThemeIcon,
@@ -21,6 +22,7 @@ import {
   MarkersIcon,
   RouteIcon,
   StyleIcon,
+  SaveIcon,
   ChevronDownIcon,
 } from "@/shared/ui/Icons";
 
@@ -40,7 +42,8 @@ type SectionId =
   | "layers"
   | "markers"
   | "routes"
-  | "style";
+  | "style"
+  | "presets";
 
 const accordionSections: {
   id: SectionId;
@@ -54,6 +57,7 @@ const accordionSections: {
   { id: "markers", label: "Markers", Icon: MarkersIcon },
   { id: "routes", label: "Routes", Icon: RouteIcon },
   { id: "style", label: "Style", Icon: StyleIcon },
+  { id: "presets", label: "Presets", Icon: SaveIcon },
 ];
 
 export default function SettingsPanel({
@@ -318,6 +322,25 @@ export default function SettingsPanel({
                 onFieldChange={handleFieldChange}
               />
             ) : null}
+          </div>
+        </div>
+      </div>
+
+      <div
+        className={`mobile-section mobile-section--presets accordion-item${openSections.has("presets") ? " accordion-item--open" : ""}`}
+      >
+        <AccordionHeader
+          sectionId="presets"
+          label={accordionSections[6].label}
+          Icon={accordionSections[6].Icon}
+          isOpen={openSections.has("presets")}
+          onToggle={toggleSection}
+        />
+        <div
+          className={`accordion-body${openSections.has("presets") ? " is-open" : ""}`}
+        >
+          <div className="accordion-body-inner">
+            {!isAuxEditorActive ? <PresetsSection /> : null}
           </div>
         </div>
       </div>

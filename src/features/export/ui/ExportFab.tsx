@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useExport } from "@/features/export/application/useExport";
 import type { ExportFormat } from "@/features/export/domain/types";
-import { CheckIcon, CloseIcon, DownloadIcon, LinkIcon, LoaderIcon } from "@/shared/ui/Icons";
+import { CheckIcon, CloseIcon, CopyIcon, DownloadIcon, LinkIcon, LoaderIcon } from "@/shared/ui/Icons";
 import SocialLinkGroup from "@/shared/ui/SocialLinkGroup";
 import { usePosterContext } from "@/features/poster/ui/PosterContext";
 import { buildUrlSearchString } from "@/features/poster/application/urlState";
@@ -17,7 +17,7 @@ interface ExportFabProps {
 }
 
 export default function ExportFab({ isMobile }: ExportFabProps) {
-  const { isExporting, exportPoster } = useExport();
+  const { isExporting, exportPoster, handleCopyToClipboard } = useExport();
   const { state } = usePosterContext();
   const [isOpen, setIsOpen] = useState(false);
   const [activeFormat, setActiveFormat] = useState<ExportFormat | null>(null);
@@ -120,6 +120,19 @@ export default function ExportFab({ isMobile }: ExportFabProps) {
                   ? <CheckIcon className="export-modal-option-icon" />
                   : <LinkIcon className="export-modal-option-icon" />}
                 <span>{copied ? "Copied!" : "Copy Link"}</span>
+              </button>
+              <button
+                type="button"
+                className="export-modal-option export-modal-option--clipboard"
+                onClick={() => { setActiveFormat("clipboard"); void handleCopyToClipboard(); }}
+                disabled={isExporting}
+              >
+                {isExporting && activeFormat === "clipboard" ? (
+                  <LoaderIcon className="export-modal-option-icon is-spinning" />
+                ) : (
+                  <CopyIcon className="export-modal-option-icon" />
+                )}
+                <span>Copy Image</span>
               </button>
               {FORMAT_OPTIONS.map(({ format, label }) => (
                 <button

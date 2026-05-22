@@ -58,6 +58,7 @@ export interface PosterForm {
   includeSkiResorts: boolean;
   includeCycleWays: boolean;
   showMarkers: boolean;
+  bearing: string;
   includeOsmAttribution: boolean;
   includeIsochrone: boolean;
   isochroneMode: IsochroneMode;

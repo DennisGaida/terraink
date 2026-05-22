@@ -107,6 +107,18 @@
   color: #ffc6aa;
 }
 
+.export-modal-option--clipboard {
+  background: rgba(12, 42, 52, 0.92);
+  border-color: rgba(94, 210, 255, 0.36);
+  color: #aae4ff;
+}
+
+.export-modal-option--clipboard:hover:not(:disabled) {
+  background: rgba(16, 56, 70, 0.96);
+  border-color: rgba(94, 210, 255, 0.64);
+  color: #c4edff;
+}
+
 .export-modal-option--svg {
   background: linear-gradient(
     135deg,

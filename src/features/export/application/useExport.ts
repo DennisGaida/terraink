@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { usePosterContext } from "@/features/poster/ui/PosterContext";
 import { localStorageCache } from "@/core/cache/localStorageCache";
 import type { ExportFormat } from "@/features/export/domain/types";
@@ -62,9 +62,17 @@ function writePosterExportCount(nextCount: number): void {
 export function useExport() {
   const { state, dispatch, effectiveTheme, mapRef } = usePosterContext();
   const { form } = state;
-  const hasVisibleMarkers = state.markers.length > 0;
+  const hasVisibleMarkers = form.showMarkers && state.markers.length > 0;
   const hasIsochroneLabels =
     form.includeIsochrone && form.isochroneShowLabels && state.isochroneGeoJson != null;
+  const visibleRoutes = useMemo(
+    () =>
+      form.showRoutes
+        ? state.routes.filter((route) => route.visible)
+        : [],
+    [form.showRoutes, state.routes],
+  );
+  const hasVisibleOverlays = hasVisibleMarkers || visibleRoutes.length > 0;
 
   const registerSuccessfulExport = useCallback(() => {
     const nextCount = readPosterExportCount() + 1;
@@ -132,12 +140,13 @@ export function useExport() {
             includeCredits: form.includeCredits,
             includeOsmAttribution: form.includeOsmAttribution,
             markers: hasVisibleMarkers ? state.markers : [],
-            markerIcons: hasVisibleMarkers
+            markerIcons: hasVisibleOverlays
               ? getAllMarkerIcons(state.customMarkerIcons)
               : [],
             isochroneGeoJson: hasIsochroneLabels ? state.isochroneGeoJson : null,
             isochroneShowLabels: hasIsochroneLabels,
             isochroneStrokeOpacity: Number(form.isochroneStrokeOpacity),
+            routes: visibleRoutes,
           });
           const svgFilename = createPosterFilename(
             form.displayCity || form.location,
@@ -178,16 +187,17 @@ export function useExport() {
           includeCredits: form.includeCredits,
           includeOsmAttribution: form.includeOsmAttribution,
           markers: hasVisibleMarkers ? state.markers : [],
-          markerIcons: hasVisibleMarkers
+          markerIcons: hasVisibleOverlays
             ? getAllMarkerIcons(state.customMarkerIcons)
             : [],
-          markerProjection: (hasVisibleMarkers || hasIsochroneLabels) ? markerProjection : undefined,
-          markerScaleX: (hasVisibleMarkers || hasIsochroneLabels) ? markerScaleX : undefined,
-          markerScaleY: (hasVisibleMarkers || hasIsochroneLabels) ? markerScaleY : undefined,
-          markerSizeScale: hasVisibleMarkers ? markerSizeScale : undefined,
+          markerProjection: (hasVisibleOverlays || hasIsochroneLabels) ? markerProjection : undefined,
+          markerScaleX: (hasVisibleOverlays || hasIsochroneLabels) ? markerScaleX : undefined,
+          markerScaleY: (hasVisibleOverlays || hasIsochroneLabels) ? markerScaleY : undefined,
+          markerSizeScale: hasVisibleOverlays ? markerSizeScale : undefined,
           isochroneGeoJson: hasIsochroneLabels ? state.isochroneGeoJson : null,
           isochroneShowLabels: hasIsochroneLabels,
           isochroneStrokeOpacity: Number(form.isochroneStrokeOpacity),
+          routes: visibleRoutes,
         });
 
         // 3. Download
@@ -221,6 +231,8 @@ export function useExport() {
       effectiveTheme,
       dispatch,
       hasVisibleMarkers,
+      hasVisibleOverlays,
+      visibleRoutes,
       registerSuccessfulExport,
       state.markers,
       state.customMarkerIcons,

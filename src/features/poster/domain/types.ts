@@ -5,6 +5,7 @@ import type {
   MarkerItem,
   MarkerProjectionInput,
 } from "@/features/markers/domain/types";
+import type { Route } from "@/features/routes/domain/types";
 
 export interface CanvasSize {
   width: number;
@@ -42,6 +43,7 @@ export interface ExportOptions {
   isochroneGeoJson?: FeatureCollection | null;
   isochroneShowLabels?: boolean;
   isochroneStrokeOpacity?: number;
+  routes?: Route[];
 }
 
 export interface Typography {

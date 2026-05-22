@@ -11,6 +11,7 @@ import MapSettingsSection from "@/features/map/ui/MapSettingsSection";
 import LayersSection from "@/features/map/ui/LayersSection";
 import IsochroneSection from "@/features/isochrone/ui/IsochroneSection";
 import MarkersSection from "@/features/markers/ui/MarkersSection";
+import RoutesSection from "@/features/routes/ui/RoutesSection";
 import TypographySection from "@/features/poster/ui/TypographySection";
 import {
   LocationIcon,
@@ -18,6 +19,7 @@ import {
   LayoutIcon,
   LayersIcon,
   MarkersIcon,
+  RouteIcon,
   StyleIcon,
   ChevronDownIcon,
 } from "@/shared/ui/Icons";
@@ -37,6 +39,7 @@ type SectionId =
   | "layout"
   | "layers"
   | "markers"
+  | "routes"
   | "style";
 
 const accordionSections: {
@@ -49,6 +52,7 @@ const accordionSections: {
   { id: "layout", label: "Layout", Icon: LayoutIcon },
   { id: "layers", label: "Layers", Icon: LayersIcon },
   { id: "markers", label: "Markers", Icon: MarkersIcon },
+  { id: "routes", label: "Routes", Icon: RouteIcon },
   { id: "style", label: "Style", Icon: StyleIcon },
 ];
 
@@ -274,12 +278,31 @@ export default function SettingsPanel({
       </div>
 
       <div
+        className={`mobile-section mobile-section--routes accordion-item${openSections.has("routes") ? " accordion-item--open" : ""}`}
+      >
+        <AccordionHeader
+          sectionId="routes"
+          label={accordionSections[5].label}
+          Icon={accordionSections[5].Icon}
+          isOpen={openSections.has("routes")}
+          onToggle={toggleSection}
+        />
+        <div
+          className={`accordion-body${openSections.has("routes") ? " is-open" : ""}`}
+        >
+          <div className="accordion-body-inner">
+            {!isColorEditorActive ? <RoutesSection /> : null}
+          </div>
+        </div>
+      </div>
+
+      <div
         className={`mobile-section mobile-section--style accordion-item${openSections.has("style") ? " accordion-item--open" : ""}`}
       >
         <AccordionHeader
           sectionId="style"
-          label={accordionSections[5].label}
-          Icon={accordionSections[5].Icon}
+          label={accordionSections[6].label}
+          Icon={accordionSections[6].Icon}
           isOpen={openSections.has("style")}
           onToggle={toggleSection}
         />

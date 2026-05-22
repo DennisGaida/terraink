@@ -13,6 +13,13 @@ import {
 import { createDefaultMarkerSettings } from "@/features/markers/infrastructure/helpers";
 import { featuredMarkerIcons } from "@/features/markers/infrastructure/iconRegistry";
 import { clamp } from "@/shared/geo/math";
+import type { Route, RouteDefaults } from "@/features/routes/domain/types";
+import {
+  MAX_ROUTE_OPACITY,
+  MAX_ROUTE_STROKE_WIDTH,
+  MIN_ROUTE_OPACITY,
+  MIN_ROUTE_STROKE_WIDTH,
+} from "@/features/routes/domain/constants";
 
 /* ────── Form state ────── */
 
@@ -61,6 +68,7 @@ export interface PosterForm {
   isochroneCenterLon: string;
   isochroneColor: string;
   isochroneShowLabels: boolean;
+  showRoutes: boolean;
 }
 
 /* ────── App-level state ────── */
@@ -76,6 +84,8 @@ export interface PosterState {
   isochroneGeoJson: FeatureCollection | null;
   isochroneLoading: boolean;
   isochroneError: string;
+  routes: Route[];
+  routeDefaults: RouteDefaults;
   error: string;
   isExporting: boolean;
   isLocationFocused: boolean;
@@ -124,7 +134,17 @@ export type PosterAction =
     }
   | { type: "RESET_MARKER_DEFAULTS" }
   | { type: "SET_ISOCHRONE_DATA"; geoJson: FeatureCollection | null; error?: string }
-  | { type: "SET_ISOCHRONE_LOADING"; loading: boolean };
+  | { type: "SET_ISOCHRONE_LOADING"; loading: boolean }
+  | { type: "ADD_ROUTE"; route: Route }
+  | { type: "UPDATE_ROUTE"; routeId: string; changes: Partial<Route> }
+  | { type: "REMOVE_ROUTE"; routeId: string }
+  | { type: "REPLACE_ROUTES"; routes: Route[] }
+  | { type: "CLEAR_ROUTES" }
+  | {
+      type: "SET_ROUTE_DEFAULTS";
+      defaults: Partial<RouteDefaults>;
+      applyToRoutes?: boolean;
+    };
 
 /* ────── Reducer ────── */
 
@@ -407,6 +427,91 @@ export function posterReducer(
 
     case "SET_ISOCHRONE_LOADING":
       return { ...state, isochroneLoading: action.loading };
+
+    case "ADD_ROUTE":
+      return {
+        ...state,
+        routes: [...state.routes, action.route],
+      };
+
+    case "UPDATE_ROUTE":
+      return {
+        ...state,
+        routes: state.routes.map((route) =>
+          route.id === action.routeId
+            ? {
+                ...route,
+                ...action.changes,
+                id: route.id,
+                segments: route.segments,
+                strokeWidth:
+                  typeof action.changes.strokeWidth === "number"
+                    ? clamp(
+                        action.changes.strokeWidth,
+                        MIN_ROUTE_STROKE_WIDTH,
+                        MAX_ROUTE_STROKE_WIDTH,
+                      )
+                    : route.strokeWidth,
+                opacity:
+                  typeof action.changes.opacity === "number"
+                    ? clamp(
+                        action.changes.opacity,
+                        MIN_ROUTE_OPACITY,
+                        MAX_ROUTE_OPACITY,
+                      )
+                    : route.opacity,
+              }
+            : route,
+        ),
+      };
+
+    case "REMOVE_ROUTE":
+      return {
+        ...state,
+        routes: state.routes.filter((route) => route.id !== action.routeId),
+      };
+
+    case "REPLACE_ROUTES":
+      return { ...state, routes: action.routes };
+
+    case "CLEAR_ROUTES":
+      return { ...state, routes: [] };
+
+    case "SET_ROUTE_DEFAULTS": {
+      const { defaults: partial } = action;
+      const nextDefaults: RouteDefaults = {
+        color: partial.color ?? state.routeDefaults.color,
+        strokeWidth:
+          typeof partial.strokeWidth === "number"
+            ? clamp(
+                partial.strokeWidth,
+                MIN_ROUTE_STROKE_WIDTH,
+                MAX_ROUTE_STROKE_WIDTH,
+              )
+            : state.routeDefaults.strokeWidth,
+        opacity:
+          typeof partial.opacity === "number"
+            ? clamp(partial.opacity, MIN_ROUTE_OPACITY, MAX_ROUTE_OPACITY)
+            : state.routeDefaults.opacity,
+        lineStyle: partial.lineStyle ?? state.routeDefaults.lineStyle,
+        startIconId: partial.startIconId ?? state.routeDefaults.startIconId,
+        finishIconId: partial.finishIconId ?? state.routeDefaults.finishIconId,
+      };
+
+      return {
+        ...state,
+        routeDefaults: nextDefaults,
+        routes: action.applyToRoutes
+          ? state.routes.map((route) => ({
+              ...route,
+              color: nextDefaults.color,
+              strokeWidth: nextDefaults.strokeWidth,
+              opacity: nextDefaults.opacity,
+              lineStyle: nextDefaults.lineStyle,
+            }))
+          : state.routes,
+      };
+    }
 
     default:
       return state;

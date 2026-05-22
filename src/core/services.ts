@@ -44,3 +44,8 @@ export { triggerDownloadBlob } from "@/features/export/infrastructure/fileDownlo
 /* ── Isochrone ── */
 
 export { fetchIsochrone } from "@/features/isochrone/infrastructure/hereAdapter";
+
+/* ── Routes ── */
+
+export { gpxParser } from "@/features/routes/infrastructure/gpxParser";
+export { drawRoutesOnCanvas } from "@/features/routes/infrastructure/rendering";

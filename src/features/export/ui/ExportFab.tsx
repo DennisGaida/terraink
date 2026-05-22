@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useExport } from "@/features/export/application/useExport";
 import type { ExportFormat } from "@/features/export/domain/types";
-import { CloseIcon, DownloadIcon, LoaderIcon } from "@/shared/ui/Icons";
+import { CloseIcon, CopyIcon, DownloadIcon, LoaderIcon } from "@/shared/ui/Icons";
 import SocialLinkGroup from "@/shared/ui/SocialLinkGroup";
 
 const FORMAT_OPTIONS: { format: ExportFormat; label: string }[] = [
@@ -15,7 +15,7 @@ interface ExportFabProps {
 }
 
 export default function ExportFab({ isMobile }: ExportFabProps) {
-  const { isExporting, exportPoster } = useExport();
+  const { isExporting, exportPoster, handleCopyToClipboard } = useExport();
   const [isOpen, setIsOpen] = useState(false);
   const [activeFormat, setActiveFormat] = useState<ExportFormat | null>(null);
   const [isTriggerVisible, setIsTriggerVisible] = useState(true);
@@ -98,6 +98,19 @@ export default function ExportFab({ isMobile }: ExportFabProps) {
               </button>
             </div>
             <div className="export-modal-actions">
+              <button
+                type="button"
+                className="export-modal-option export-modal-option--clipboard"
+                onClick={() => { setActiveFormat("clipboard"); void handleCopyToClipboard(); }}
+                disabled={isExporting}
+              >
+                {isExporting && activeFormat === "clipboard" ? (
+                  <LoaderIcon className="export-modal-option-icon is-spinning" />
+                ) : (
+                  <CopyIcon className="export-modal-option-icon" />
+                )}
+                <span>Copy</span>
+              </button>
               {FORMAT_OPTIONS.map(({ format, label }) => (
                 <button
                   key={format}

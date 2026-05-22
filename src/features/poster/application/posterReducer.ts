@@ -55,6 +55,8 @@ export interface PosterForm {
   includeRoadPath: boolean;
   includeRoadMinorLow: boolean;
   includeRoadOutline: boolean;
+  includeSkiResorts: boolean;
+  includeCycleWays: boolean;
   showMarkers: boolean;
   includeOsmAttribution: boolean;
   includeIsochrone: boolean;

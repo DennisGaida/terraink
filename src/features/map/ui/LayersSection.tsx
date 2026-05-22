@@ -18,8 +18,10 @@ const LAYER_ROWS: LayerRow[] = [
   { toggleName: "includeWater",     label: "Show water",     colorKey: "map.water"     },
   { toggleName: "includeParks",     label: "Show parks",     colorKey: "map.parks"     },
   { toggleName: "includeRoads",     label: "Show roads",     colorKey: "map.roads.major" },
-  { toggleName: "includeRail",      label: "Show rail",      colorKey: "map.rail"      },
-  { toggleName: "includeAeroway",   label: "Show aeroway",   colorKey: "map.aeroway"   },
+  { toggleName: "includeRail",        label: "Show rail",        colorKey: "map.rail"        },
+  { toggleName: "includeAeroway",     label: "Show aeroway",     colorKey: "map.aeroway"     },
+  { toggleName: "includeCycleWays",   label: "Show cycle ways",  colorKey: "map.roads.major" },
+  { toggleName: "includeSkiResorts",  label: "Show ski resorts", colorKey: "map.rail"        },
 ];
 
 interface LayersSectionProps {

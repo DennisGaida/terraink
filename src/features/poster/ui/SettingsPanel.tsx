@@ -8,6 +8,7 @@ import type { MobileTab } from "@/shared/ui/MobileNavBar";
 
 import LocationSection from "@/features/location/ui/LocationSection";
 import MapSettingsSection from "@/features/map/ui/MapSettingsSection";
+import SettingsSection from "@/features/settings/ui/SettingsSection";
 import LayersSection from "@/features/map/ui/LayersSection";
 import IsochroneSection from "@/features/isochrone/ui/IsochroneSection";
 import MarkersSection from "@/features/markers/ui/MarkersSection";
@@ -62,8 +63,10 @@ const accordionSections: {
 
 export default function SettingsPanel({
   mobileTab,
+  activeTab,
 }: {
   mobileTab?: MobileTab;
+  activeTab?: MobileTab;
 }) {
   const { state, dispatch, mapRef, selectedTheme, effectiveTheme } = usePosterContext();
   const {
@@ -118,6 +121,14 @@ export default function SettingsPanel({
     handleLocationSelect(location);
     flyToLocation(location.lat, location.lon);
   };
+
+  if (activeTab === "settings") {
+    return (
+      <form className="settings-panel" onSubmit={(e) => e.preventDefault()}>
+        <SettingsSection />
+      </form>
+    );
+  }
 
   return (
     <form className="settings-panel" onSubmit={(e) => e.preventDefault()}>

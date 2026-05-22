@@ -21,6 +21,7 @@ import {
   MIN_ROUTE_STROKE_WIDTH,
 } from "@/features/routes/domain/constants";
 import type { SavedTheme } from "@/features/theme/domain/types";
+import type { UserDefaults } from "@/features/settings/domain/types";
 
 /* ────── Form state ────── */
 
@@ -81,6 +82,7 @@ export interface PosterState {
   form: PosterForm;
   customColors: Record<string, string>;
   savedThemes: SavedTheme[];
+  userDefaults: UserDefaults;
   markers: MarkerItem[];
   customMarkerIcons: MarkerIconDefinition[];
   markerDefaults: MarkerDefaults;
@@ -121,6 +123,8 @@ export type PosterAction =
   | { type: "ADD_SAVED_THEME"; theme: SavedTheme }
   | { type: "UPDATE_SAVED_THEME"; themeId: string; changes: Partial<SavedTheme> }
   | { type: "REMOVE_SAVED_THEME"; themeId: string }
+  | { type: "SET_USER_DEFAULTS"; defaults: UserDefaults }
+  | { type: "RESET_USER_DEFAULTS" }
   | { type: "SELECT_LOCATION"; location: SearchResult }
   | { type: "SET_USER_LOCATION"; location: SearchResult | null }
   | { type: "CLEAR_LOCATION" }
@@ -260,10 +264,15 @@ export function posterReducer(
       const nextSaved = state.savedThemes.filter(
         (t) => t.id !== action.themeId,
       );
-      // If user is currently on the deleted saved theme, reducer leaves
-      // form.theme alone — caller decides whether to switch themes.
       return { ...state, savedThemes: nextSaved };
     }
+
+    case "SET_USER_DEFAULTS":
+      return { ...state, userDefaults: action.defaults };
+
+    case "RESET_USER_DEFAULTS":
+      return { ...state, userDefaults: {} };
+
 
     case "SELECT_LOCATION":
       return {

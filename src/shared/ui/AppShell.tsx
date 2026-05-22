@@ -57,7 +57,7 @@ function SettingsDrawer({
           {...handleProps}
         />
         <div className="mobile-drawer-content">
-          <SettingsPanel mobileTab={mobileTab} />
+          <SettingsPanel mobileTab={mobileTab} activeTab={mobileTab} />
         </div>
       </div>
     </div>
@@ -255,7 +255,7 @@ export default function AppShell() {
           className={`desktop-settings-slide${desktopPanelOpen ? " is-open" : ""}`}
         >
           <Suspense fallback={null}>
-            <SettingsPanel />
+            <SettingsPanel activeTab={desktopTab} />
           </Suspense>
         </div>
       </div>
